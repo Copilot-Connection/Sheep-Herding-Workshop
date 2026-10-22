@@ -13,4 +13,4 @@ For more details and the latest prerequisites, settings, and policy options, see
 
 ---
 
-Next: [Defender - Investigate security signals](./Lab8Defender.md)
+Next: [Defender - Investigate security signals](./Lab14.md)

@@ -42,4 +42,4 @@ Defender setup:
 11. [Lab 11 - Create a communication compliance policy](./Lab11.md)
 12. [Lab 12 - Capture Data Loss Prevention risks](./Lab12.md)
 13. [Lab 13 - Protecting from Insider Risk Management](./Lab13.md)
-14. [Defender - Investigate security signals](./Lab8Defender.md)
+14. [Defender - Investigate security signals](./Lab14.md)
