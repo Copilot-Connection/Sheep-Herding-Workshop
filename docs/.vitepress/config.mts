@@ -2,7 +2,7 @@ import { defineConfig } from "vitepress";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "Agentageddon",
+  title: "Sheep Herding",
   base: "/Sheep-Herding-Workshop/",
   description: "Sheep Herding With Agent 365",
   themeConfig: {
