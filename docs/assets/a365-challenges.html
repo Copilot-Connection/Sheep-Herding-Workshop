@@ -1,0 +1,1448 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Three little games. One well-kept flock. An offline, single-page Hill Farm 365 adventure.">
+<title>Hill Farm 365 | Keep the flock</title>
+<script>
+  (() => {
+    const param = new URLSearchParams(window.location.search).get("scoutTheme");
+    const theme =
+      param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --cp-bg: #f7f4ef;
+  --cp-bg-elevated: #fcfbf8;
+  --cp-surface: #ffffff;
+  --cp-surface-soft: #f5f5f5;
+  --cp-border: #dedede;
+  --cp-border-strong: #919191;
+  --cp-text: #242424;
+  --cp-text-muted: #5c5c5c;
+  --cp-text-soft: #6f6f6f;
+  --cp-accent: #b11f4b;
+  --cp-accent-hover: #9a1a41;
+  --cp-accent-soft: rgba(177, 31, 75, 0.08);
+  --cp-accent-fg: #ffffff;
+  --cp-success: #16a34a;
+  --cp-danger: #dc2626;
+  --cp-warning: #f59e0b;
+  --cp-link: #0078d4;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+  --cp-overlay: rgba(255, 255, 255, 0.8);
+  --cp-panel: rgba(255, 255, 255, 0.86);
+  --cp-panel-strong: rgba(255, 255, 255, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.55);
+  --cp-highlight: rgba(177, 31, 75, 0.12);
+  --cp-night-bg: color-mix(in srgb, var(--cp-text) 94%, var(--cp-accent));
+  --cp-night-field: color-mix(in srgb, var(--cp-text) 84%, var(--cp-bg));
+  --cp-night-ink: var(--cp-bg-elevated);
+  --cp-night-soft: color-mix(in srgb, var(--cp-bg) 75%, var(--cp-text));
+  --cp-night-accent: color-mix(in srgb, var(--cp-accent) 35%, var(--cp-bg));
+  --cp-night-line: color-mix(in srgb, var(--cp-text) 65%, var(--cp-bg));
+  --cp-success-ink: color-mix(in srgb, var(--cp-success) 55%, var(--cp-text));
+  --cp-link-ink: color-mix(in srgb, var(--cp-link) 90%, var(--cp-text));
+  --cp-meadow: color-mix(in srgb, var(--cp-success) 22%, var(--cp-bg-elevated));
+  --cp-grass: color-mix(in srgb, var(--cp-success) 62%, var(--cp-warning));
+  --cp-grass-soft: color-mix(in srgb, var(--cp-grass) 36%, var(--cp-bg-elevated));
+  --cp-sky: color-mix(in srgb, var(--cp-link) 18%, var(--cp-surface));
+  --cp-wool: var(--cp-surface);
+  --cp-farm-ink: var(--cp-text);
+  --cp-bark: color-mix(in srgb, var(--cp-warning) 30%, var(--cp-text));
+  --cp-skin: color-mix(in srgb, var(--cp-warning) 25%, var(--cp-wool));
+  --cp-amber-soft: color-mix(in srgb, var(--cp-warning) 18%, var(--cp-surface));
+  --cp-amber-ink: color-mix(in srgb, var(--cp-warning) 40%, var(--cp-text));
+  --cp-ease-out: cubic-bezier(.16, 1, .3, 1);
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --cp-bg: #3d3b3a;
+  --cp-bg-elevated: #343231;
+  --cp-surface: #292929;
+  --cp-surface-soft: #2e2e2e;
+  --cp-border: #474747;
+  --cp-border-strong: #5f5f5f;
+  --cp-text: #dedede;
+  --cp-text-muted: #919191;
+  --cp-text-soft: #b0b0b0;
+  --cp-accent: #fd8ea1;
+  --cp-accent-hover: #fb7b91;
+  --cp-accent-soft: rgba(253, 142, 161, 0.14);
+  --cp-accent-fg: #1a1a1a;
+  --cp-success: #4ade80;
+  --cp-danger: #f87171;
+  --cp-warning: #fbbf24;
+  --cp-link: #4da6ff;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+  --cp-overlay: rgba(41, 41, 41, 0.88);
+  --cp-panel: rgba(41, 41, 41, 0.72);
+  --cp-panel-strong: rgba(41, 41, 41, 0.96);
+  --cp-sheen: rgba(255, 255, 255, 0.04);
+  --cp-highlight: rgba(253, 142, 161, 0.12);
+  --cp-night-bg: color-mix(in srgb, var(--cp-surface) 92%, var(--cp-accent-fg));
+  --cp-night-field: var(--cp-bg-elevated);
+  --cp-night-ink: var(--cp-text);
+  --cp-night-soft: var(--cp-text-soft);
+  --cp-night-accent: var(--cp-accent);
+  --cp-night-line: var(--cp-border-strong);
+  --cp-meadow: color-mix(in srgb, var(--cp-success) 16%, var(--cp-surface));
+  --cp-grass-soft: color-mix(in srgb, var(--cp-success) 22%, var(--cp-surface));
+  --cp-sky: color-mix(in srgb, var(--cp-link) 16%, var(--cp-surface));
+  --cp-wool: var(--cp-text);
+  --cp-farm-ink: var(--cp-surface);
+  --cp-bark: color-mix(in srgb, var(--cp-warning) 30%, var(--cp-surface));
+  --cp-amber-ink: var(--cp-warning);
+}
+:root {
+  --cp-bg: #fafafa;
+  --cp-bg-elevated: #ffffff;
+  --cp-surface-soft: #f3f3f3;
+  --cp-border: #e0e0e0;
+  --cp-border-strong: #8a8886;
+  --cp-text-muted: #616161;
+  --cp-accent: #0078d4;
+  --cp-accent-hover: #106ebe;
+  --cp-accent-soft: color-mix(in srgb, var(--cp-accent) 10%, var(--cp-surface));
+  --cp-success: #7fba00;
+  --cp-danger: #f25022;
+  --cp-warning: #ffb900;
+  --cp-highlight: color-mix(in srgb, var(--cp-accent) 16%, transparent);
+}
+html[data-theme="dark"] {
+  --cp-bg: #1f1f1f;
+  --cp-bg-elevated: #292929;
+  --cp-surface: #242424;
+  --cp-surface-soft: #333333;
+  --cp-border: #424242;
+  --cp-border-strong: #858585;
+  --cp-text: #f5f5f5;
+  --cp-text-muted: #bdbdbd;
+  --cp-text-soft: #d1d1d1;
+  --cp-accent: #60cdff;
+  --cp-accent-hover: #98dcff;
+  --cp-accent-soft: color-mix(in srgb, var(--cp-accent) 14%, var(--cp-surface));
+  --cp-accent-fg: #1f1f1f;
+  --cp-success: #a4cf0c;
+  --cp-danger: #ff8c69;
+  --cp-warning: #ffd335;
+  --cp-link: #60cdff;
+  --cp-highlight: color-mix(in srgb, var(--cp-accent) 20%, transparent);
+  --cp-overlay: color-mix(in srgb, var(--cp-surface) 88%, transparent);
+  --cp-panel: color-mix(in srgb, var(--cp-surface) 72%, transparent);
+  --cp-panel-strong: color-mix(in srgb, var(--cp-surface) 96%, transparent);
+  --cp-success-ink: var(--cp-success);
+}
+* { box-sizing: border-box; scrollbar-width: thin; scrollbar-color: var(--cp-border-strong) var(--cp-bg); }
+::selection { background: var(--cp-accent); color: var(--cp-accent-fg); }
+body { margin: 0; background: var(--cp-bg); color: var(--cp-text); font: 15px/1.5 "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif; accent-color: var(--cp-accent); caret-color: var(--cp-accent); }
+html[data-theme="dark"] .shell, html[data-theme="dark"] dialog { --cp-text-muted: var(--cp-text-soft); }
+button, a { -webkit-tap-highlight-color: var(--cp-highlight); }
+button { font: inherit; color: inherit; cursor: pointer; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: .625rem; padding: 10px 16px; min-height: 44px; transition: background .18s, border-color .18s, transform .18s var(--cp-ease-out); }
+button:hover:not(:disabled) { background: var(--cp-accent-soft); border-color: var(--cp-accent); }
+button:active:not(:disabled) { transform: translateY(2px); }
+button:disabled { opacity: .45; cursor: not-allowed; }
+button:focus-visible, a:focus-visible, canvas:focus-visible { outline: 3px solid var(--cp-accent); outline-offset: 4px; }
+button.primary { background: var(--cp-accent); border-color: var(--cp-accent); color: var(--cp-accent-fg); font-weight: 700; }
+button.primary:hover { background: var(--cp-accent-hover); }
+a { color: var(--cp-link-ink); text-underline-offset: .2em; text-decoration-thickness: 1px; }
+[hidden] { display: none !important; }
+.shell { max-width: 1440px; margin: auto; padding: 0 32px; }
+header { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--cp-border); }
+.brand { display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: -.5px; font-size: 21px; }
+.brand-mark { background: var(--cp-accent); color: var(--cp-accent-fg); width: 38px; height: 38px; display: grid; place-items: center; border-radius: 10px; }
+.brand-mark svg { width: 28px; fill: none; stroke: currentColor; stroke-width: 2; }
+.brand small { font-size: 11px; font-weight: 500; color: var(--cp-text-muted); display: block; letter-spacing: 1.5px; margin-top: 1px; }
+.header-actions { display: flex; gap: 8px; }
+.header-actions button { padding: 8px 12px; font-size: 12px; display: inline-flex; align-items: center; gap: 8px; background: var(--cp-bg-elevated); }
+.ui-icon { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.intro { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 24px 0 12px; }
+h1 { display: flex; align-items: center; gap: 12px; font-size: clamp(30px, 3vw, 42px); line-height: 1.1; letter-spacing: -.035em; margin: 0 0 8px; font-weight: 800; text-wrap: balance; }
+h1 .sprite { width: 64px; height: 54px; transform: rotate(-8deg); }
+.intro p { margin: 0; color: var(--cp-text-muted); max-width: 620px; font-size: 14px; }
+.intro-note { font-size: 12px; color: var(--cp-text-muted); }
+.season { text-align: right; font-size: 12px; line-height: 1.9; color: var(--cp-text-muted); white-space: nowrap; }
+.season strong { color: var(--cp-accent); }
+.chapters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin: 8px 0 20px; padding: 12px 0; }
+.chapter { position: relative; display: flex; text-align: left; align-items: center; gap: 12px; padding: 6px 0; background: none; border: 0; border-radius: 0; }
+.chapter[data-level="0"] { --cp-chapter: var(--cp-success-ink); --cp-chapter-soft: var(--cp-meadow); }
+.chapter[data-level="1"] { --cp-chapter: var(--cp-amber-ink); --cp-chapter-soft: var(--cp-amber-soft); }
+.chapter[data-level="2"] { --cp-chapter: var(--cp-accent); --cp-chapter-soft: var(--cp-accent-soft); }
+.chapter:not(:last-child)::after { content: ""; position: absolute; top: 50%; right: -8px; width: 18%; border-top: 1px dashed var(--cp-border-strong); }
+.chapter.active { background: none; }
+.chapter:hover:not(:disabled) { background: none; }
+.chapter .number { display: grid; place-items: center; flex-shrink: 0; width: 38px; height: 38px; border: 1px solid var(--cp-border-strong); border-radius: 50%; font: 15px Consolas, "Courier New", Courier, monospace; color: var(--cp-text-muted); background: var(--cp-bg); }
+.chapter .number { background: var(--cp-chapter-soft); color: var(--cp-chapter); border-color: var(--cp-chapter); border-width: 2px; }
+.chapter.active .number { border-color: var(--cp-chapter); background: var(--cp-chapter); color: var(--cp-bg-elevated); }
+.chapter.active strong { color: var(--cp-chapter); }
+.chapter.done:not(.active) .number { background: var(--cp-chapter-soft); border-color: var(--cp-chapter); color: var(--cp-chapter); }
+.chapter strong { display: block; font-size: 15px; }
+.chapter small { display: block; color: var(--cp-text-muted); font-size: 12px; }
+.chapter .status { margin-left: 4px; font-size: 11px; color: var(--cp-text-muted); }
+.chapter:disabled { opacity: 1; }
+.chapter:disabled .number, .chapter:disabled strong, .chapter:disabled small { color: var(--cp-text-muted); }
+.play-layout { display: grid; grid-template-columns: minmax(0, 1fr) 256px; gap: 28px; align-items: start; }
+.game-card { border: 2px solid var(--cp-border-strong); border-radius: 16px; overflow: hidden; background: var(--cp-surface); }
+.game-top { padding: 12px 18px; display: flex; justify-content: space-between; gap: 12px; align-items: center; border-bottom: 1px solid var(--cp-border); background: var(--cp-bg-elevated); }
+.game-top strong { font-size: 13px; }
+.game-top span { font-size: 11px; font-weight: 600; letter-spacing: .04em; color: var(--cp-text-muted); text-align: right; }
+.stage { position: relative; background: var(--cp-bg-elevated); isolation: isolate; }
+#game { display: block; width: 100%; height: auto; aspect-ratio: 960 / 576; touch-action: none; }
+.stage-caption { position: absolute; left: 16px; bottom: 12px; font: 10px Consolas, "Courier New", Courier, monospace; letter-spacing: 1px; color: var(--cp-text-muted); pointer-events: none; }
+.game-bottom { padding: 12px 18px; border-top: 1px solid var(--cp-border); display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 58px; }
+.game-bottom p { margin: 0; color: var(--cp-text-muted); font-size: 12px; }
+.game-bottom button { padding: 6px 12px; font-size: 12px; }
+.sidebar { display: grid; gap: 24px; padding: 8px 0; }
+.panel { padding: 0; }
+.panel + .panel { border-top: 1px solid var(--cp-border); padding-top: 20px; }
+.panel h2 { margin: 0 0 12px; font-size: 21px; line-height: 1.25; letter-spacing: -.025em; text-wrap: balance; }
+.panel:first-child h2 { color: var(--cp-success-ink); }
+.panel p { font-size: 13px; color: var(--cp-text-muted); margin: 0 0 12px; }
+.panel .chapter-note { margin: 14px 0 0; font-size: 11px; color: var(--cp-accent); }
+.panel .notebook-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; margin: 0 0 12px; letter-spacing: 0; }
+.notebook-title .ui-icon { color: var(--cp-accent); }
+.metric { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 20px 0 8px; }
+.metric strong { font: 700 19px/1.2 Consolas, "Courier New", Courier, monospace; font-variant-numeric: tabular-nums; }
+.metric span { font-size: 11px; color: var(--cp-text-muted); }
+progress { width: 100%; height: 5px; border: 0; background: var(--cp-border); accent-color: var(--cp-accent); display: block; }
+progress::-webkit-progress-bar { background: var(--cp-border); border-radius: 8px; }
+progress::-webkit-progress-value { background: var(--cp-accent); border-radius: 8px; }
+.controls { font-size: 12px; color: var(--cp-text-muted); display: grid; gap: 10px; margin-top: 20px; }
+.connections { display: grid; gap: 12px; margin-top: 20px; }
+.connection { font-size: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--cp-border); }
+.connection strong, .connection small { display: block; }
+.connection strong { color: var(--cp-text); margin-bottom: 3px; }
+.connection small { color: var(--cp-text-muted); font-size: 11px; }
+.connection.connected strong { color: var(--cp-success-ink); }
+kbd { border: 1px solid var(--cp-border); border-bottom-width: 2px; border-radius: 4px; background: var(--cp-surface); padding: 2px 5px; font: 11px Consolas, "Courier New", Courier, monospace; color: var(--cp-text); }
+.log { padding: 0; list-style: none; margin: 0; }
+.log li { border-top: 1px solid var(--cp-border); padding: 10px 0; font-size: 12px; color: var(--cp-text-muted); }
+.log li:first-child { border-top: 0; padding-top: 0; }
+.log strong { display: block; color: var(--cp-text); margin-bottom: 3px; font-size: 12px; }
+.role-badge { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 12px; color: var(--cp-text-muted); margin-top: 12px; }
+.role-badge svg { width: 34px; height: 34px; margin-right: 2px; }
+.role-badge b { color: var(--cp-text); }
+.action-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-top: 1px solid var(--cp-border); background: var(--cp-bg-elevated); }
+.action-bar button { padding: 9px 12px; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.action-bar button[data-tool] { flex: 1; text-align: left; gap: 8px; justify-content: flex-start; }
+.tool-copy strong, .tool-copy small { display: block; }
+.tool-copy strong { font-size: 12px; }
+.tool-copy small { font-size: 11px; font-weight: 400; margin-top: 2px; color: var(--cp-text-muted); }
+.selected .tool-copy small { color: var(--cp-accent-fg); }
+.tool-key { align-self: flex-start; font: 11px Consolas, "Courier New", Courier, monospace; opacity: .8; }
+.action-bar .lane-controls { width: 100%; justify-content: center; }
+.action-bar button.selected { background: var(--cp-accent); color: var(--cp-accent-fg); border-color: var(--cp-accent); }
+.dpad { display: flex; gap: 5px; }
+.dpad button { min-width: 44px; min-height: 44px; font-weight: 700; touch-action: none; }
+.direction-button { padding: 8px 10px !important; }
+.overlay { position: absolute; inset: 0; display: grid; place-items: center; background: var(--cp-overlay); padding: 24px; overflow-y: auto; }
+.overlay-inner { max-width: 580px; width: 100%; text-align: center; padding: 28px; background: var(--cp-bg-elevated); border-radius: 16px; }
+.overlay h2 { font-size: clamp(26px, 3vw, 38px); line-height: 1.1; letter-spacing: -.035em; margin: 0 0 16px; text-wrap: balance; }
+.overlay p { color: var(--cp-text-muted); max-width: 480px; margin: 0 auto 20px; font-size: 14px; }
+.overlay .overlay-context { color: var(--cp-accent); font-size: 11px; margin: 20px 0 0; }
+.overlay-emblem { display: grid; place-items: center; width: 52px; height: 52px; background: var(--cp-accent-soft); color: var(--cp-accent); margin: 0 auto 20px; border-radius: 50%; }
+.overlay-emblem .ui-icon { width: 28px; height: 28px; }
+.overlay .buttons { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.overlay .buttons .primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.roster { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 20px 0 12px; }
+.roster button { position: relative; padding: 8px 4px 10px; min-width: 0; background: var(--cp-bg-elevated); border-width: 2px; }
+.roster button[data-role="shepherd"] { background: var(--cp-amber-soft); }
+.roster button[data-role="dog"] { background: var(--cp-accent-soft); }
+.roster button[data-role="sheep"] { background: var(--cp-meadow); }
+.roster button[data-role="owl"] { background: var(--cp-sky); }
+.roster button[aria-pressed="true"] { border-color: var(--cp-accent); }
+.roster button[aria-pressed="true"]::after { content: ""; position: absolute; top: 7px; right: 7px; width: 6px; height: 6px; background: var(--cp-accent); border-radius: 50%; }
+.roster svg { width: 56px; height: 56px; display: block; margin: 0 auto 4px; }
+.roster strong { display: block; font-size: 12px; }
+.roster small { display: block; color: var(--cp-text-muted); font-size: 11px; }
+.sprite .wool { fill: var(--cp-farm-ink); }
+.sprite .light, .sprite .fluff { fill: var(--cp-wool); }
+.sprite .shade { fill: var(--cp-border-strong); }
+.sprite .scarf { fill: var(--cp-accent); }
+.sprite .ground { fill: var(--cp-border); }
+.sprite .beak { fill: var(--cp-warning); }
+.sprite .skin { fill: var(--cp-skin); }
+.sprite .outline { stroke: var(--cp-farm-ink); stroke-width: 1.5; }
+.sprite .smile { fill: none; stroke: var(--cp-farm-ink); stroke-width: 1.5; stroke-linecap: round; }
+.overlay p.character-note { min-height: 20px; margin: 0 0 20px; font-size: 12px; color: var(--cp-text-muted); }
+.overlay p.character-note b { color: var(--cp-accent); font-weight: 600; }
+.stage[data-screen="home"] .overlay { background: none; padding: 0; justify-items: start; }
+.stage[data-screen="home"] .overlay-inner { width: 53%; max-width: none; height: 100%; padding: 32px 28px; display: flex; flex-direction: column; justify-content: center; text-align: left; border-radius: 0; border-right: 1px solid var(--cp-border); }
+.stage[data-screen="home"] .overlay h2 { font-size: clamp(28px, 2.8vw, 40px); }
+.stage[data-screen="home"] .overlay p { margin-left: 0; font-size: 13px; }
+.stage[data-screen="home"] .overlay .buttons { justify-content: start; }
+.stage[data-screen="home"] .overlay .primary { flex: 1; }
+.stage[data-screen="home"] .overlay-context { margin-top: 16px; margin-bottom: 0; }
+.stage[data-screen="home"] .stage-caption { display: none; }
+.stage[data-chapter="1"] .stage-caption { display: none; }
+.stage[data-chapter="2"]:not([data-screen="home"]) .stage-caption { color: var(--cp-night-soft); }
+.stage[data-screen="home"] .overlay-emblem { display: none; }
+.stage[data-screen="home"] .roster { margin-top: 8px; }
+.result { display: flex; gap: 24px; justify-content: center; margin: 24px 0; }
+.result strong { font: 26px Consolas, "Courier New", Courier, monospace; display: block; color: var(--cp-accent); font-variant-numeric: tabular-nums; }
+.result small { color: var(--cp-text-muted); font-size: 11px; }
+.toast { min-height: 24px; margin: 12px 0 0; font-size: 12px; color: var(--cp-text-muted); }
+footer { display: flex; justify-content: space-between; gap: 24px; padding: 24px 0; color: var(--cp-text-muted); font-size: 12px; }
+footer p { margin: 0; }
+dialog { max-width: 720px; width: calc(100% - 32px); max-height: 85vh; color: var(--cp-text); background: var(--cp-bg-elevated); border: 1px solid var(--cp-border); border-radius: 16px; padding: 28px; }
+dialog::backdrop { background: var(--cp-overlay); }
+dialog h2 { margin: 0; letter-spacing: -.025em; }
+dialog h3 { margin-bottom: 6px; font-size: 16px; }
+dialog p, dialog li { font-size: 14px; color: var(--cp-text-muted); }
+.dialog-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px; }
+.dialog-head button { padding: 6px 12px; }
+.notice { color: var(--cp-danger); }
+.overlay-inner.entering { animation: gate-open .45s var(--cp-ease-out) both; }
+@keyframes gate-open { from { transform: translateY(10px); clip-path: inset(0 0 8px); } to { transform: translateY(0); clip-path: inset(0); } }
+@media (max-width: 1200px) {
+  .shell { padding: 0 20px; }
+  .play-layout { grid-template-columns: minmax(0, 1fr); }
+  .sidebar { grid-template-columns: 1fr 1fr; }
+  .sidebar { gap: 28px; }
+  .panel + .panel { border-top: 0; border-left: 1px solid var(--cp-border); padding: 0 0 0 28px; }
+  .controls { display: flex; flex-wrap: wrap; }
+  .chapter:not(:last-child)::after { width: 12%; }
+  .chapter .status { display: none; }
+  .stage[data-screen="home"] .overlay-inner { padding: 24px; }
+}
+@media (max-width: 620px) {
+  .shell { padding: 0 12px; }
+  header { min-height: 72px; }
+  .brand { font-size: 16px; gap: 8px; letter-spacing: -.02em; }
+  .brand small { display: none; }
+  .brand-mark { width: 32px; height: 32px; }
+  .brand-mark svg { width: 24px; }
+  .header-actions { gap: 4px; }
+  .header-actions button { font-size: 11px; padding: 7px 8px; }
+  .header-actions button:not(:first-child) { font-size: 0; gap: 0; width: 40px; }
+  .header-actions button .ui-icon { width: 16px; }
+  .intro { padding: 20px 0 8px; }
+  .intro p { font-size: 13px; }
+  .intro-note { display: none; }
+  .season { display: none; }
+  .chapters { gap: 8px; margin: 4px 0 12px; }
+  .chapter { padding: 6px 0; gap: 6px; align-items: flex-start; }
+  .chapter:not(:last-child)::after { display: none; }
+  .chapter .number { font-size: 11px; width: 25px; height: 25px; }
+  .chapter strong { font-size: 12px; padding-top: 3px; }
+  .chapter small { font-size: 11px; }
+  .chapter .status { display: none; }
+  #game { aspect-ratio: 960 / 690; height: auto; }
+  .stage[data-screen="home"] { display: flex; flex-direction: column; }
+  .stage[data-screen="home"] #game { height: 200px; aspect-ratio: auto; object-fit: cover; object-position: right center; }
+  .stage[data-screen="home"] .overlay { position: relative; order: -1; overflow: visible; }
+  .stage[data-screen="home"] .overlay-inner { width: 100%; padding: 24px 20px 20px; border-right: 0; }
+  .stage[data-screen="home"] .overlay h2 { font-size: 30px; max-width: 310px; }
+  .stage[data-screen="home"] .overlay .buttons { flex-wrap: nowrap; }
+  .stage[data-screen="home"] .overlay-context { display: none; }
+  .stage[data-screen="home"] .roster { margin-top: 8px; }
+  .overlay { padding: 8px; }
+  .overlay-inner { padding: 20px 16px; }
+  .overlay p { font-size: 12px; margin-bottom: 12px; }
+  .overlay h2 { margin-bottom: 10px; }
+  .roster { gap: 5px; margin: 12px 0; }
+  .roster button { min-width: 0; padding: 8px 4px; }
+  .roster svg { width: 44px; height: 44px; }
+  .roster small { font-size: 11px; }
+  .overlay-emblem { width: 36px; height: 36px; margin-bottom: 12px; }
+  .overlay-emblem .ui-icon { width: 22px; }
+  .overlay p.character-note { margin-bottom: 16px; font-size: 12px; }
+  .action-bar { gap: 6px; padding: 10px 8px; }
+  .action-bar button[data-tool] { flex-basis: 45%; padding: 8px; }
+  .sidebar { grid-template-columns: 1fr; }
+  .panel + .panel { border-left: 0; border-top: 1px solid var(--cp-border); padding: 20px 0 0; }
+  .game-top, .game-bottom { padding: 10px 12px; }
+  .stage-caption { display: none; }
+  .result { margin: 12px 0; }
+  .game-top strong { font-size: 11px; }
+  .game-top span { font-size: 11px; max-width: 45%; }
+  footer { flex-direction: column; gap: 8px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="icon-book" viewBox="0 0 24 24"><path d="M12 6c-3-2-6-2-9-1v15c3-1 6-1 9 1 3-2 6-2 9-1V5c-3-1-6-1-9 1Zm0 0v15M6 9h3m-3 4h3m6-4h3m-3 4h3"/></symbol>
+  <symbol id="icon-sound" viewBox="0 0 24 24"><path d="m12 4-6 5H3v6h3l6 5V4Zm4 4c3 2 3 6 0 8m3-11c5 4 5 10 0 14"/></symbol>
+  <symbol id="icon-theme" viewBox="0 0 24 24"><path d="M20 15a9 9 0 0 1-11-11 9 9 0 1 0 11 11Z"/></symbol>
+  <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+  <symbol id="icon-shield" viewBox="0 0 24 24"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z"/><path d="m8 12 3 3 5-6"/></symbol>
+  <symbol id="icon-pause" viewBox="0 0 24 24"><path d="M8 5v14m8-14v14"/></symbol>
+  <symbol id="icon-eye" viewBox="0 0 24 24"><path d="M2 12S6 5 12 5s10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="icon-gate" viewBox="0 0 24 24"><path d="M3 3v18M21 3v18M3 6h18M3 12h18M3 18h18M3 6l18 12"/></symbol>
+</defs></svg>
+<div class="shell">
+  <header>
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M8 21c-6-2-4-9 0-9-1-6 7-8 9-4 5-4 10 1 8 5 6 3 3 10-2 10H10M10 23v5m10-5v5"/><path d="M7 17H3v7h6m-3-4h1"/></svg></span>
+      <span>Hill Farm 365<small>A LITTLE FIELD ADVENTURE</small></span>
+    </div>
+    <div class="header-actions">
+      <button id="journal-button"><svg class="ui-icon" aria-hidden="true"><use href="#icon-book"/></svg>Field guide</button>
+      <button id="sound-button" aria-label="Sound off" aria-pressed="false"><svg class="ui-icon" aria-hidden="true"><use href="#icon-sound"/></svg><span>Sound off</span></button>
+      <button id="theme-button" aria-label="Switch colour theme"><svg class="ui-icon" aria-hidden="true"><use href="#icon-theme"/></svg>Theme</button>
+    </div>
+  </header>
+  <section class="intro">
+    <div><h1>Keep the flock.</h1><p>Find every stray. Give each sheep the right field. Keep the wolves out.</p><span class="intro-note">A hands-on adventure through observe, govern, and secure.</span></div>
+    <div class="season">One farm. Three ways to keep it safe.<br><strong id="journey-label">Your first day on the hill</strong><br>Offline ready &middot; No downloads</div>
+  </section>
+  <nav class="chapters" aria-label="Game levels">
+    <button class="chapter active" data-level="0"><span class="number">01</span><span><strong>Observe</strong><small>The missing flock</small></span><span class="status">Open</span></button>
+    <button class="chapter" data-level="1" disabled><span class="number">02</span><span><strong>Govern</strong><small>The sorting yard</small></span><span class="status">Locked</span></button>
+    <button class="chapter" data-level="2" disabled><span class="number">03</span><span><strong>Secure</strong><small>The night watch</small></span><span class="status">Locked</span></button>
+  </nav>
+  <main class="play-layout">
+    <section class="game-card" aria-label="Hill Farm game">
+      <div class="game-top"><strong id="location">Lane End / Welcome to the farm</strong><span id="game-status">CHOOSE YOUR FARMHAND</span></div>
+      <div class="stage">
+        <canvas id="game" width="960" height="576" tabindex="0" aria-label="Farm game. Choose a character to begin. Keyboard and touch controls are described below."></canvas>
+        <span class="stage-caption" id="stage-caption">THE FELLS / HILL FARM 365</span>
+        <div class="overlay" id="overlay"><div class="overlay-inner" id="overlay-content"></div></div>
+      </div>
+      <div class="action-bar" id="action-bar" hidden></div>
+      <div class="game-bottom"><p id="hint">A small adventure for a very important flock.</p><button id="pause-button" disabled>Pause</button></div>
+    </section>
+    <aside class="sidebar">
+      <section class="panel">
+        <h2 id="mission-title">Big hill. Little heroes.</h2>
+        <p id="mission-copy">Every sheep is an AI agent. You are the one keeping track of them. Pick your farmhand and start at the flock book.</p>
+        <p class="chapter-note" id="mission-kicker">Your shift</p>
+        <div class="metric"><strong id="metric">0 / 3</strong><span id="metric-label">chapters complete</span></div>
+        <progress id="progress" value="0" max="3" aria-label="Mission progress"></progress>
+        <div class="controls" id="controls"><span>No timer in the first two levels.</span><span>Play with a keyboard, mouse, or touch.</span></div>
+        <div class="connections" id="connections" hidden aria-label="Agent to tool connections"></div>
+      </section>
+      <section class="panel">
+        <h2 class="notebook-title"><svg class="ui-icon" aria-hidden="true"><use href="#icon-book"/></svg>The flock book</h2><ul id="log" class="log"><li><strong>Welcome, farmhand.</strong>The flock has wandered into the bracken. Someone ought to find them.</li></ul>
+        <div class="role-badge" id="role-badge">Playing as <b>not chosen yet</b></div>
+      </section>
+    </aside>
+  </main>
+  <p id="announcement" class="toast" role="status" aria-live="polite"></p>
+  <footer><p>Inspired by the supplied Hill Farm 365 map. An independent learning game, not a Microsoft product.</p><p>Single file &middot; No tracking &middot; Progress saved on this device when available</p></footer>
+</div>
+<dialog id="journal" aria-labelledby="journal-title">
+  <div class="dialog-head"><h2 id="journal-title">Notes from the hill</h2><button id="close-journal">Close</button></div>
+  <p>Three games, three ideas from your Hill Farm 365 map. These are simplified metaphors, not simulations of Microsoft security products.</p>
+  <h3>01 / Observe &mdash; Know your flock</h3>
+  <p>Chase the eight wandering sheep and get close enough to tag them automatically, or press E to reach a little farther. They scamper away when approached, but you are faster. Tap a sheep to follow it as it moves; tap the ground to walk there. Caught sheep settle down, so you can tell who is already recorded. The flock book represents an agent registry; ear tags represent identity; the bell represents telemetry. Recording a problem is not the same as fixing it.</p>
+  <p><a href="https://learn.microsoft.com/en-us/microsoft-agent-365/admin/agent-registry-overview" target="_blank" rel="noopener noreferrer">Agent registry on Microsoft Learn</a></p>
+  <h3>02 / Govern &mdash; The right field, not every field</h3>
+  <p>Grey stone obstacles block both the farmhand and sheep. Plan a route around them, keeping space behind each sheep so you can push it.</p>
+  <p>Connect four sheep-agents to their approved tools in the larger sorting yard. A connects to Search (read-only), B to Documents (draft-only), C to Mail (internal-only), and D to Records (approved fields). There is one guardrail block per sheep, spread around the yard. Push each agent onto its matching lettered block to apply its guardrail, then into its matching tool socket. Other agents are denied at that block, and tools reject agents whose guardrail has not been applied. Your farmhand can walk through any guardrail. You cannot pull sheep, so leave room to stand behind them. Undo is unlimited, and there is no time limit. These letter-matching rules illustrate scoped access, not real product configuration.</p>
+  <p><a href="https://learn.microsoft.com/en-us/entra/id-governance/agent-id-governance-overview" target="_blank" rel="noopener noreferrer">Agent ID governance on Microsoft Learn</a></p>
+  <h3>03 / Secure &mdash; The right response</h3>
+  <p>Select a control, then tap a threat or its lane. Defender counters prompt-injection wolves; Purview counters data leaks; Entra counters impostor identities; Intune counters untrusted devices. Block 20 threats before five get through. Different controls complement one another; none is a universal shield.</p>
+  <p><a href="https://learn.microsoft.com/en-us/security/security-for-ai/agent-365-security" target="_blank" rel="noopener noreferrer">Security for Agent 365 on Microsoft Learn</a></p>
+  <h3>Your farmhand</h3>
+  <p>Rowan the shepherd, Pip the sheepdog, Clover the sheep, or Wren the owl. All four have the same abilities: choose a favourite without changing the difficulty. Use Escape or Pause to take a break. Opening this guide also pauses the game.</p>
+  <p id="storage-notice">Progress is kept locally when browser storage is available. The game also works directly from a file and makes no network requests.</p>
+</dialog>
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const canvas = $("game"), ctx = canvas.getContext("2d");
+  const W = 960, H = 576, STORE = "hill-farm-365-three-chapters-v1";
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const requestedTheme = new URLSearchParams(location.search).get("scoutTheme");
+  if (requestedTheme === "light" || requestedTheme === "dark") document.documentElement.dataset.theme = requestedTheme;
+  const roles = [
+    { id: "shepherd", name: "Rowan", kind: "Shepherd", line: "A steady hand." },
+    { id: "dog", name: "Pip", kind: "Sheepdog", line: "A very good dog." },
+    { id: "sheep", name: "Clover", kind: "Sheep", line: "One of the flock." },
+    { id: "owl", name: "Wren", kind: "Owl", line: "Eyes on everything." }
+  ];
+  const chapters = [
+    { name: "Observe", title: "The missing flock", location: "The open fell / Observe", type: "Sheep chase / No time limit", lesson: "You cannot govern a flock you cannot see.", copy: "Eight sheep are wandering the hill, and they scamper away when you approach! Chase them and get close to tag them automatically, or press E for a little extra reach. Tap a sheep to follow it." },
+    { name: "Govern", title: "The sorting yard", location: "The sorting yard / Govern", type: "Agent-to-tool puzzle / No time limit", lesson: "Connect each agent to its approved tool, within its guardrails.", copy: "Four sheep, four guardrail blocks, spread around the yard. Push each sheep onto its matching lettered block, then into its approved tool socket. Grey stone obstacles stop everyone, so leave room to push around them. You can walk through any guardrail. Push only; Undo is unlimited." },
+    { name: "Secure", title: "The night watch", location: "The farm perimeter / Secure", type: "Real-time defence / 20 threats", lesson: "Layer your defences. Match the control to the threat.", copy: "The wolves are coming. Choose a control, then click a threat or its lane. Match the label, not the lane. Stop 20 before five get through; missed threats bring reinforcements." }
+  ];
+  const facts = [
+    {name: "Dolly", mark: "D", x: 204, y: 162, note: "Registry entry found. Owner: Rowan. A known member of the flock.", short: "Known agent / named owner"},
+    {name: "Moss", mark: "M", x: 447, y: 130, note: "Ear tag checked. A distinct identity tells this sheep apart from the others.", short: "Identity / ear tag checked"},
+    {name: "Bramble", mark: "B", x: 808, y: 143, note: "Unmanaged sheep discovered in the bracken. Added to the inventory, not automatically made safe.", short: "Shadow agent / discovered"},
+    {name: "Fern", mark: "F", x: 692, y: 305, note: "No owner on the tag. Recorded for review; someone must take responsibility.", short: "Ownerless / review needed"},
+    {name: "Bells", mark: "L", x: 372, y: 296, note: "The bell is working. Telemetry helps you hear where this sheep has been.", short: "Telemetry / activity visible"},
+    {name: "Cloud", mark: "C", x: 165, y: 405, note: "A sheep from another farm. One inventory can include agents built on different platforms.", short: "External flock / inventoried"},
+    {name: "Heather", mark: "H", x: 514, y: 458, note: "Activity trail recovered. An audit log helps explain who did what and when.", short: "Audit trail / recorded"},
+    {name: "Ash", mark: "A", x: 827, y: 439, note: "A second hidden stray. Discovery gives you a starting point for governance.", short: "Unmanaged / now visible"}
+  ];
+  const tools = [
+    {name: "Defender", action: "Bark", threat: "PROMPT INJECTION", hint: "Prompt-injection wolf"},
+    {name: "Purview", action: "Seal", threat: "DATA LEAK", hint: "Sensitive fleece leaving the farm"},
+    {name: "Entra", action: "Verify", threat: "IMPOSTOR", hint: "A stranger with a borrowed tag"},
+    {name: "Intune", action: "Check", threat: "UNTRUSTED DEVICE", hint: "An unchecked sheep trailer"}
+  ];
+  let saved = { role: "dog", completed: [false, false, false], best: [null, null, null] };
+  let storageIssue = "";
+  try {
+    const raw = localStorage.getItem(STORE);
+    if (raw !== null) {
+      const data = JSON.parse(raw);
+      if (!data || !roles.some(r => r.id === data.role) ||
+          !Array.isArray(data.completed) || data.completed.length !== 3 ||
+          !data.completed.every(v => typeof v === "boolean") ||
+          (data.completed[1] && !data.completed[0]) || (data.completed[2] && !data.completed[1]) ||
+          !Array.isArray(data.best) || data.best.length !== 3 ||
+          !data.best.every(v => v === null || (Number.isFinite(v) && v >= 0))) {
+        throw new Error("Unrecognised save format");
+      }
+      saved = data;
+    }
+  } catch (error) {
+    storageIssue = "Saved progress could not be read. This visit starts fresh; the game is still playable. " + error.message;
+  }
+  let palette = {}, level = 0, mode = "home", paused = false, lastTime = 0, elapsed = 0;
+  let player = {x: 90, y: 285}, found = new Set(), target = null, board = null, watch = null;
+  let flock = [];
+  const fell = {left: 70, right: 890, top: 108, bottom: 505};
+  let selectedTool = 0, keys = new Set(), moveDelay = 0, particles = [], gameLog = [];
+  let audio = null, sound = false, inspectCooldown = 0, animationTime = 0;
+  let lastFocus = null;
+
+  function refreshPalette() {
+    const css = getComputedStyle(canvas);
+    for (const key of ["bg", "bg-elevated", "surface", "surface-soft", "border", "border-strong", "text", "text-muted", "text-soft", "accent", "accent-fg", "accent-soft", "success", "success-ink", "danger", "warning", "highlight", "night-bg", "night-field", "night-ink", "night-soft", "night-accent", "night-line", "meadow", "grass", "grass-soft", "sky", "wool", "farm-ink", "bark", "skin", "amber-soft", "amber-ink"]) {
+      palette[key] = css.getPropertyValue("--cp-" + key).trim();
+    }
+  }
+  function icon(name) {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "ui-icon"); svg.setAttribute("aria-hidden", "true");
+    const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    use.setAttribute("href", "#icon-" + name); svg.append(use);
+    return svg;
+  }
+  function syncStage() {
+    const stage = canvas.parentElement;
+    stage.dataset.screen = mode;
+    stage.dataset.chapter = String(level);
+  }
+  function save() {
+    try { localStorage.setItem(STORE, JSON.stringify(saved)); }
+    catch (error) {
+      storageIssue = "Progress cannot be saved in this browser. Keep this page open to continue your journey. " + error.message;
+      $("storage-notice").textContent = storageIssue;
+      announce("Progress is available for this visit only: browser storage is unavailable.");
+    }
+  }
+  function el(tag, text, cls) {
+    const node = document.createElement(tag);
+    if (text !== undefined) node.textContent = text;
+    if (cls) node.className = cls;
+    return node;
+  }
+  function button(text, action, cls) {
+    const node = el("button", text, cls);
+    node.addEventListener("click", action);
+    return node;
+  }
+  function announce(text) { $("announcement").textContent = text; }
+  function addLog(title, text) {
+    gameLog.unshift({title, text});
+    $("log").replaceChildren(...gameLog.slice(0, 3).map(item => {
+      const li = el("li"); li.append(el("strong", item.title), document.createTextNode(item.text)); return li;
+    }));
+    announce(title + ". " + text);
+  }
+  function tone(freq = 520, duration = .09) {
+    if (!sound || !audio) return;
+    const oscillator = audio.createOscillator(), gain = audio.createGain();
+    oscillator.type = "triangle"; oscillator.frequency.value = freq;
+    gain.gain.setValueAtTime(.04, audio.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001, audio.currentTime + duration);
+    oscillator.connect(gain); gain.connect(audio.destination);
+    oscillator.start(); oscillator.stop(audio.currentTime + duration);
+  }
+  function clearInput() { keys.clear(); target = null; moveDelay = 0; }
+  function showOverlay(context, title, text, actions) {
+    clearInput();
+    syncStage();
+    const content = $("overlay-content");
+    const emblem = el("div", undefined, "overlay-emblem");
+    emblem.setAttribute("aria-hidden", "true");
+    const failedWatch = mode === "result" && level === 2 && watch && watch.lost >= 5;
+    emblem.append(icon(mode === "result" ? (failedWatch ? "shield" : "check") : paused ? "pause" : ["eye", "gate", "shield"][level]));
+    content.replaceChildren(emblem, el("h2", title), el("p", text));
+    const row = el("div", undefined, "buttons");
+    for (const action of actions) row.append(button(action.text, action.fn, action.primary ? "primary" : ""));
+    content.append(row, el("p", context, "overlay-context"));
+    content.classList.add("entering");
+    content.addEventListener("animationend", () => content.classList.remove("entering"), {once: true});
+    $("overlay").hidden = false;
+    $("pause-button").disabled = true;
+    const first = row.querySelector("button");
+    if (first) first.focus({preventScroll: true});
+    return content;
+  }
+  function syncChapters() {
+    document.querySelectorAll("[data-level]").forEach(node => {
+      const index = Number(node.dataset.level), unlocked = index === 0 || saved.completed[index - 1];
+      node.disabled = !unlocked;
+      node.classList.toggle("active", index === level);
+      node.classList.toggle("done", saved.completed[index]);
+      node.setAttribute("aria-current", index === level ? "step" : "false");
+      node.querySelector(".status").textContent = saved.completed[index] ? "Complete" : unlocked ? "Open" : "Locked";
+    });
+    const count = saved.completed.filter(Boolean).length;
+    $("journey-label").textContent = count === 3 ? "A well-kept flock" : count + " of 3 chapters complete";
+    $("role-badge").replaceChildren(roleIcon(saved.role), document.createTextNode("Playing as "), el("b", roles.find(r => r.id === saved.role).name));
+  }
+  function roleIcon(id) {
+    const node = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    node.setAttribute("viewBox", "0 0 64 64"); node.setAttribute("aria-hidden", "true"); node.setAttribute("class", "sprite");
+    const shapes = {
+      shepherd: '<rect class="wool" x="21" y="44" width="8" height="14" rx="3"/><rect class="wool" x="34" y="44" width="8" height="14" rx="3"/><rect class="scarf" x="18" y="31" width="27" height="22" rx="9"/><circle class="skin outline" cx="31" cy="23" r="12"/><path class="beak outline" d="M18 17Q19-2 42 9l2 8H18Z"/><rect class="beak outline" x="12" y="15" width="38" height="6" rx="3"/><circle class="wool" cx="27" cy="25" r="1.5"/><circle class="wool" cx="36" cy="25" r="1.5"/><path class="smile" d="M28 30q4 4 8-1M50 57V15q0-10 8-6 5 3 0 7"/>',
+      dog: '<ellipse class="wool" cx="19" cy="26" rx="10" ry="17" transform="rotate(20 19 26)"/><ellipse class="wool" cx="46" cy="26" rx="10" ry="17" transform="rotate(-20 46 26)"/><ellipse class="wool" cx="32" cy="36" rx="20" ry="21"/><path class="light" d="M29 15q-10 13-6 23h18q4-10-6-23Z"/><ellipse class="light" cx="32" cy="42" rx="13" ry="9"/><circle class="wool" cx="25" cy="31" r="3"/><circle class="wool" cx="40" cy="31" r="3"/><ellipse class="wool" cx="32" cy="40" rx="5" ry="4"/><path class="scarf" d="M28 46h8v6q-4 7-8 0Z"/><path class="scarf" d="m17 52 30-1-2 7H20Z"/>',
+      sheep: '<rect class="wool" x="16" y="44" width="6" height="14" rx="3"/><rect class="wool" x="36" y="44" width="6" height="14" rx="3"/><path class="fluff outline" d="M10 30Q0 19 13 16 13 4 25 10 34 0 41 12 54 9 52 22 63 33 49 39 48 54 36 48 24 57 18 46 4 48 10 36Z"/><ellipse class="wool" cx="43" cy="32" rx="12" ry="15"/><ellipse class="wool" cx="31" cy="27" rx="7" ry="4" transform="rotate(24 31 27)"/><ellipse class="wool" cx="55" cy="27" rx="7" ry="4" transform="rotate(-24 55 27)"/><ellipse class="light" cx="40" cy="28" rx="3" ry="4"/><ellipse class="light" cx="49" cy="28" rx="3" ry="4"/><circle class="wool" cx="41" cy="29" r="1.5"/><circle class="wool" cx="50" cy="29" r="1.5"/><path class="scarf" d="m32 39 4 8 8-3-3-5Z"/><path class="light" d="M39 37q5 5 10-1-5 9-10 1Z"/>',
+      owl: '<path class="beak outline" d="m15 20-1-13 13 9h10L50 7l-1 13q17 37-17 38T15 20Z"/><ellipse class="light" cx="24" cy="29" rx="11" ry="13"/><ellipse class="light" cx="42" cy="29" rx="11" ry="13"/><circle class="wool" cx="25" cy="30" r="5"/><circle class="wool" cx="41" cy="30" r="5"/><circle class="light" cx="26" cy="28" r="1.5"/><circle class="light" cx="42" cy="28" r="1.5"/><path class="scarf" d="m27 36 12 0-6 9Z"/><path class="shade" d="m22 47 4 3 4-3m5 0 4 3 4-3"/><path class="wool" d="M22 55h6v5h-6zm15 0h6v5h-6Z"/>'
+    };
+    node.innerHTML = '<ellipse class="ground" cx="32" cy="59" rx="23" ry="3"/>' + shapes[id];
+    return node;
+  }
+  function home() {
+    mode = "home"; paused = false; level = 0; clearInput(); particles = [];
+    gameLog = []; $("pause-button").textContent = "Pause";
+    $("log").replaceChildren();
+    addLog("Welcome, farmhand.", "The flock has wandered into the bracken. Someone ought to find them.");
+    announce(storageIssue);
+    $("connections").hidden = true;
+    $("action-bar").hidden = true; $("location").textContent = "Lane End / Welcome to the farm";
+    $("game-status").textContent = "CHOOSE YOUR FARMHAND";
+    const content = showOverlay("Welcome to Hill Farm 365", "Little heroes. Big responsibility.", "A missing flock, a tangled sorting yard, and something stirring in the woods. Choose who will keep the farm running.", []);
+    const roster = el("div", undefined, "roster");
+    roles.forEach(role => {
+      const item = button("", () => {
+        saved.role = role.id; save();
+        roster.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.role === role.id)));
+        updateCharacterNote();
+        syncChapters();
+      });
+      item.dataset.role = role.id; item.setAttribute("aria-pressed", String(saved.role === role.id));
+      item.setAttribute("aria-label", role.name + " the " + role.kind + ". " + role.line);
+      item.append(roleIcon(role.id), el("strong", role.name), el("small", role.kind));
+      roster.append(item);
+    });
+    const row = content.querySelector(".buttons");
+    content.insertBefore(roster, row);
+    const note = el("p", undefined, "character-note");
+    function updateCharacterNote() {
+      const chosen = roles.find(r => r.id === saved.role);
+      note.replaceChildren(el("b", chosen.name + " the " + chosen.kind.toLowerCase() + ". "), document.createTextNode(chosen.line));
+    }
+    content.insertBefore(note, row); updateCharacterNote();
+    const next = saved.completed.findIndex(v => !v);
+    row.append(button(saved.completed.some(Boolean) ? "Continue the adventure" : "Start the adventure", () => brief(next < 0 ? 0 : next), "primary"));
+    row.append(button("How to play", openJournal));
+    row.querySelector(".primary").append(icon("arrow"));
+    $("mission-kicker").textContent = "Your shift"; $("mission-title").textContent = "Big hill. Little heroes.";
+    $("mission-copy").textContent = "Every sheep is an AI agent. Your mission is to observe, govern, and secure the whole flock. All characters have the same abilities.";
+    setMetric(saved.completed.filter(Boolean).length, 3, "chapters complete");
+    $("controls").replaceChildren(el("span", "No timer in the first two levels."), el("span", "Keyboard, mouse, and touch friendly."));
+    $("hint").textContent = "Choose a favourite. All four farmhands can play every chapter.";
+    syncChapters();
+  }
+  function brief(index) {
+    if (index > 0 && !saved.completed[index - 1]) return;
+    level = index; mode = "brief"; paused = false;
+    $("connections").hidden = index !== 1;
+    if (index === 1) renderConnections(false);
+    $("action-bar").hidden = true; $("location").textContent = chapters[level].location;
+    $("game-status").textContent = chapters[level].type.toUpperCase();
+    const content = showOverlay("Chapter 0" + (level + 1) + " / " + chapters[level].name, chapters[level].title, chapters[level].copy, [
+      {text: "Let's go", fn: startLevel, primary: true},
+      {text: "Change farmhand", fn: home}
+    ]);
+    const tip = el("p", chapters[level].lesson); content.insertBefore(tip, content.querySelector(".buttons"));
+    $("mission-kicker").textContent = "Chapter 0" + (level + 1) + " / " + chapters[level].name;
+    $("mission-title").textContent = chapters[level].title;
+    $("mission-copy").textContent = chapters[level].copy;
+    syncChapters();
+  }
+  function setMetric(value, max, label) {
+    $("metric").textContent = value + " / " + max;
+    $("metric-label").textContent = label;
+    $("progress").max = max; $("progress").value = value;
+  }
+  function startLevel() {
+    mode = "playing"; paused = false; elapsed = 0; particles = []; gameLog = []; clearInput(); inspectCooldown = 0;
+    syncStage();
+    $("connections").hidden = level !== 1;
+    $("overlay").hidden = true; $("pause-button").disabled = false; $("pause-button").textContent = "Pause";
+    $("stage-caption").textContent = ["THE FELLS / FIND EVERY STRAY", "THE YARD / LEAST PRIVILEGE", "THE PERIMETER / LAYERED DEFENCE"][level];
+    $("mission-kicker").textContent = "Chapter 0" + (level + 1) + " / " + chapters[level].name;
+    $("mission-title").textContent = chapters[level].title; $("mission-copy").textContent = chapters[level].copy;
+    const controls = $("controls"); controls.replaceChildren();
+    const bar = $("action-bar"); bar.replaceChildren(); bar.hidden = false;
+    if (level === 0) {
+      player = {x: 90, y: 285}; found = new Set();
+      flock = facts.map((sheep, i) => ({
+        ...sheep, heading: i * 2.4, turnIn: 1 + Math.random() * 2,
+        vx: 0, vy: 0, fleeing: false
+      }));
+      setMetric(0, 8, "sheep recorded");
+      controls.innerHTML = "<span><kbd>WASD</kbd> / <kbd>Arrows</kbd> Chase</span><span>Get close to catch &middot; <kbd>E</kbd> Extra tagging reach</span><span>Tap a moving sheep to follow it.</span>";
+      makeDpad(bar); bar.append(button("Tag sheep [E]", inspect));
+      $("hint").textContent = "Catch up to tag them! Tap a sheep to follow it. Caught sheep settle down.";
+      canvas.setAttribute("aria-label", "Observe: chase eight moving sheep with arrows or WASD. Get close to catch automatically, or press E for extra tagging reach. Tap a sheep to follow it.");
+      addLog("The flock is on the move!", "Chase and tag all eight sheep. You are faster than they are; there is no time limit.");
+    } else if (level === 1) {
+      board = initialBoard(); setMetric(0, goals.length, "tools connected"); renderConnections();
+      controls.innerHTML = "<span><kbd>WASD</kbd> / <kbd>Arrows</kbd> Move and push</span><span><kbd>Z</kbd> Undo &middot; <kbd>R</kbd> Reset yard</span><span>Tap a neighbouring tile to step there.</span>";
+      makeDpad(bar); bar.append(button("Undo [Z]", undo), button("Reset yard [R]", resetYard));
+      $("hint").textContent = "Apply each sheep's matching guardrail, then connect its tool. Grey stone blocks stop everyone: plan your route around them.";
+      $("game-status").textContent = "0 MOVES / 0 OF 4 TOOLS CONNECTED";
+      canvas.setAttribute("aria-label", "Govern: push four agents A B C D through matching guardrails to their approved tools. Arrows or WASD move; Z undoes; R resets. The connection list names each tool and guardrail.");
+      addLog("Agents need tools, not every tool.", "Match each agent, guardrail, and tool letter. Guardrails enforce the permissions shown in the connection list.");
+    } else {
+      watch = {spawned: 0, blocked: 0, lost: 0, next: 2.4, threats: [], cooldown: 0, feedback: "", feedbackTime: 0, sequence: makeSequence()};
+      selectedTool = 0; setMetric(0, 20, "threats stopped");
+      controls.innerHTML = "<span><kbd>1</kbd>-<kbd>4</kbd> Select a control</span><span>Tap a threat / lane to respond</span><span><kbd>Q W E R</kbd> Respond in lanes 1-4</span>";
+      tools.forEach((tool, i) => {
+        const b = button("", () => selectTool(i));
+        b.setAttribute("aria-label", (i + 1) + " " + tool.name + " / " + tool.action + ". Counters " + tool.threat.toLowerCase());
+        const copy = el("span", undefined, "tool-copy");
+        copy.append(el("strong", tool.name + " / " + tool.action), el("small", tool.threat.toLowerCase()));
+        b.append(el("span", String(i + 1), "tool-key"), copy);
+        b.dataset.tool = String(i); b.setAttribute("aria-pressed", String(i === 0)); b.classList.toggle("selected", i === 0);
+        bar.append(b);
+      });
+      const lanes = el("div", undefined, "dpad lane-controls");
+      for (let i = 0; i < 4; i++) lanes.append(button("Lane " + (i + 1), () => defend(i)));
+      bar.append(lanes);
+      $("hint").textContent = "Choose a control, then a threat's lane. Wrong control? Switch and try again.";
+      canvas.setAttribute("aria-label", "Secure: select control with 1 to 4. Click threats or use Q W E R for lanes. Stop 20 threats before 5 get through.");
+      addLog("Keep all four controls ready.", "Defender: injection. Purview: leaks. Entra: impostors. Intune: devices.");
+    }
+    syncChapters(); canvas.focus({preventScroll: true});
+  }
+  function makeDpad(parent) {
+    const pad = el("div", undefined, "dpad"); pad.setAttribute("aria-label", "Movement");
+    [["Left", -1, 0], ["Up", 0, -1], ["Down", 0, 1], ["Right", 1, 0]].forEach(([label, dx, dy]) => {
+      const b = button("", () => { if (active() && level === 1) step(dx, dy); }, "direction-button");
+      b.setAttribute("aria-label", label);
+      const arrow = icon("arrow");
+      arrow.style.transform = "rotate(" + (dx < 0 ? 180 : dy < 0 ? -90 : dy > 0 ? 90 : 0) + "deg)";
+      b.append(arrow);
+      if (level === 0) {
+        const key = dx < 0 ? "arrowleft" : dx > 0 ? "arrowright" : dy < 0 ? "arrowup" : "arrowdown";
+        b.addEventListener("pointerdown", event => {
+          if (!active()) return;
+          b.setPointerCapture(event.pointerId); keys.add(key); target = null; event.preventDefault();
+        });
+        for (const eventName of ["pointerup", "pointercancel", "lostpointercapture"]) b.addEventListener(eventName, () => keys.delete(key));
+      }
+      pad.append(b);
+    });
+    parent.append(pad);
+  }
+  function active() { return mode === "playing" && !paused && !$("journal").open && !document.hidden; }
+  function inspect() {
+    if (!active() || level !== 0 || inspectCooldown > 0) return;
+    const nearby = nearestSheep(48);
+    if (nearby === -1) { announce("Not quite close enough! Keep chasing, or tap a moving sheep to follow it."); return; }
+    catchSheep(nearby);
+  }
+  function nearestSheep(reach) {
+    let nearest = -1, distance = reach;
+    flock.forEach((sheep, i) => {
+      const gap = Math.hypot(sheep.x - player.x, sheep.y - player.y);
+      if (!found.has(i) && gap < distance) { nearest = i; distance = gap; }
+    });
+    return nearest;
+  }
+  function catchSheep(index) {
+    found.add(index); inspectCooldown = .25;
+    const sheep = flock[index]; sheep.vx = 0; sheep.vy = 0; sheep.fleeing = false;
+    if (target && target.sheepIndex === index) target = null;
+    burst(sheep.x, sheep.y, "accent"); tone(520 + found.size * 45);
+    addLog(sheep.name + " caught / " + sheep.short, sheep.note);
+    setMetric(found.size, 8, "sheep recorded");
+    if (found.size === 8) finish();
+  }
+  function moveFlock(dt) {
+    flock.forEach((sheep, i) => {
+      if (found.has(i)) return;
+      const dx = sheep.x - player.x, dy = sheep.y - player.y, distance = Math.hypot(dx, dy);
+      sheep.fleeing = distance < 150;
+      sheep.turnIn -= dt;
+      if (sheep.turnIn <= 0) {
+        sheep.heading += (Math.random() - .5) * 2.6;
+        sheep.turnIn = 1.4 + Math.random() * 2;
+      }
+      const speed = sheep.fleeing ? 96 : 38 + (i % 3) * 5;
+      sheep.vx = (sheep.fleeing && distance > 0 ? dx / distance : Math.cos(sheep.heading)) * speed;
+      sheep.vy = (sheep.fleeing && distance > 0 ? dy / distance : Math.sin(sheep.heading)) * speed;
+      const x = sheep.x + sheep.vx * dt, y = sheep.y + sheep.vy * dt;
+      sheep.x = Math.max(fell.left, Math.min(fell.right, x));
+      sheep.y = Math.max(fell.top, Math.min(fell.bottom, y));
+      if (x < fell.left || x > fell.right) sheep.heading = Math.PI - sheep.heading;
+      if (y < fell.top || y > fell.bottom) sheep.heading = -sheep.heading;
+    });
+  }
+  function initialBoard() {
+    return {x: 2, y: 4, moves: 0, history: [], sheep: [{x: 3, y: 5, id: "A"}, {x: 4, y: 2, id: "B"}, {x: 2, y: 7, id: "C"}, {x: 3, y: 4, id: "D"}]};
+  }
+  const goals = [
+    {x: 10, y: 2, id: "A", name: "Search", policy: "Read-only", color: "sky"},
+    {x: 10, y: 4, id: "B", name: "Documents", policy: "Draft-only", color: "amber-soft"},
+    {x: 10, y: 6, id: "C", name: "Mail", policy: "Internal-only", color: "accent-soft"},
+    {x: 10, y: 8, id: "D", name: "Records", policy: "Approved fields", color: "meadow"}
+  ];
+  const guardrails = [{x: 3, y: 2, id: "A"}, {x: 7, y: 3, id: "B"}, {x: 4, y: 7, id: "C"}, {x: 8, y: 8, id: "D"}];
+  const stones = [[5, 2], [7, 5], [8, 5], [5, 6], [6, 8], [2, 8]];
+  const grid = {x: 24, y: 54, size: 42, cols: 12, rows: 11};
+  function wall(x, y) { return x <= 0 || x >= grid.cols - 1 || y <= 0 || y >= grid.rows - 1 || stones.some(([sx, sy]) => x === sx && y === sy); }
+  function agentDenial(id, x, y) {
+    const guardrail = guardrails.find(g => g.x === x && g.y === y);
+    if (guardrail && guardrail.id !== id) return "Guardrail " + guardrail.id + " denies agent " + id + ". Use guardrail " + id + " for its approved permissions.";
+    const tool = goals.find(g => g.x === x && g.y === y);
+    if (tool && tool.id !== id) return "Connection denied: " + tool.name + " is approved for agent " + tool.id + ", not " + id + ".";
+    if (tool && !board.sheep.find(s => s.id === id).governed) return "Guardrail " + id + " required. Push agent " + id + " onto its matching block before connecting to " + tool.name + ".";
+    return "";
+  }
+  function renderConnections(showCurrent = true) {
+    $("connections").replaceChildren(...goals.map(goal => {
+      const governed = showCurrent && board && board.sheep.some(s => s.id === goal.id && s.governed);
+      const connected = showCurrent && board && board.sheep.some(s => s.id === goal.id && s.x === goal.x && s.y === goal.y);
+      const item = el("div", undefined, "connection" + (connected ? " connected" : ""));
+      item.append(el("strong", goal.id + " agent > " + goal.name + (connected ? " / Connected" : "")),
+        el("small", "Guardrail " + goal.id + ": " + goal.policy + (governed ? " / Applied" : " / Visit block " + goal.id)));
+      return item;
+    }));
+  }
+  function updateGovernHUD() {
+    const count = matched();
+    setMetric(count, goals.length, "tools connected"); renderConnections();
+    $("game-status").textContent = board.moves + " MOVES / " + count + " OF " + goals.length + " TOOLS CONNECTED";
+  }
+  function matched() { return board.sheep.filter(s => goals.some(g => g.id === s.id && g.x === s.x && g.y === s.y)).length; }
+  function step(dx, dy) {
+    if (!active() || level !== 1) return;
+    const x = board.x + dx, y = board.y + dy;
+    if (wall(x, y)) { tone(130, .04); return; }
+    const sheep = board.sheep.find(s => s.x === x && s.y === y);
+    if (sheep && (wall(x + dx, y + dy) || board.sheep.some(s => s.x === x + dx && s.y === y + dy))) {
+      announce("No room to push. Try approaching from another side, or use Undo."); tone(130, .04); return;
+    }
+    if (sheep) {
+      const denial = agentDenial(sheep.id, x + dx, y + dy);
+      if (denial) { announce(denial); tone(130, .08); return; }
+    }
+    board.history.push({x: board.x, y: board.y, moves: board.moves, sheep: board.sheep.map(s => ({...s}))});
+    board.x = x; board.y = y; board.moves++;
+    if (sheep) {
+      sheep.x += dx; sheep.y += dy; tone(300, .05);
+      const goal = goals.find(g => g.x === sheep.x && g.y === sheep.y);
+      if (goal) {
+        tone(700); addLog("Agent " + sheep.id + " connected to " + goal.name, "Guardrail applied: " + goal.policy + ". This agent has only its approved tool access.");
+      } else if (guardrails.some(g => g.x === sheep.x && g.y === sheep.y)) {
+        sheep.governed = true;
+        announce("Guardrail " + sheep.id + " allows this agent. Continue to " + goals.find(g => g.id === sheep.id).name + ".");
+      }
+    }
+    updateGovernHUD();
+    if (matched() === goals.length) finish();
+  }
+  function undo() {
+    if (!active() || level !== 1) return;
+    const previous = board.history.pop();
+    if (!previous) { announce("You are already at the beginning of this yard."); return; }
+    Object.assign(board, previous);
+    updateGovernHUD();
+    announce("Last move undone. All previous moves are still available to undo.");
+  }
+  function resetYard() {
+    if (!active() || level !== 1) return;
+    board = initialBoard(); updateGovernHUD();
+    announce("The yard has been reset. No time limit; take your time.");
+  }
+  function makeSequence() {
+    const sequence = [];
+    for (let round = 0; round < 5; round++) {
+      const group = [0, 1, 2, 3];
+      for (let i = group.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [group[i], group[j]] = [group[j], group[i]]; }
+      sequence.push(...group);
+    }
+    return sequence;
+  }
+  function selectTool(index) {
+    if (!active() || level !== 2) return;
+    selectedTool = index;
+    document.querySelectorAll("[data-tool]").forEach(node => {
+      const chosen = Number(node.dataset.tool) === index;
+      node.classList.toggle("selected", chosen); node.setAttribute("aria-pressed", String(chosen));
+    });
+    announce(tools[index].name + " selected: counters " + tools[index].hint.toLowerCase() + ".");
+  }
+  function defend(lane, specific) {
+    if (!active() || level !== 2 || watch.cooldown > 0) return;
+    const threat = specific || watch.threats.filter(t => t.lane === lane).sort((a, b) => a.x - b.x)[0];
+    if (!threat) { announce("This lane is clear. Watch the woods."); return; }
+    watch.cooldown = .22;
+    if (threat.type === selectedTool) {
+      watch.threats.splice(watch.threats.indexOf(threat), 1); watch.blocked++;
+      burst(threat.x, laneY(threat.lane), "success"); tone(680, .08);
+      watch.feedback = tools[selectedTool].name + ": threat blocked."; watch.feedbackTime = 1.4;
+      setMetric(watch.blocked, 20, "threats stopped");
+      announce(watch.feedback + " " + watch.blocked + " of 20 stopped.");
+      checkWatchEnd();
+    } else {
+      tone(140, .12); threat.flash = .4;
+      watch.feedback = "Use " + tools[threat.type].name + " for " + tools[threat.type].threat.toLowerCase() + ".";
+      watch.feedbackTime = 2; announce(watch.feedback);
+    }
+  }
+  function laneY(lane) { return 156 + lane * 98; }
+  function checkWatchEnd() {
+    if (watch.lost >= 5) { lose(); return; }
+    if (watch.blocked === 20) finish();
+  }
+  function finish() {
+    const score = level === 0 ? Math.round(elapsed) : level === 1 ? board.moves : watch.lost;
+    if (saved.best[level] === null || score < saved.best[level]) saved.best[level] = score;
+    saved.completed[level] = true; save(); mode = "result"; paused = false; tone(880, .25); clearInput();
+    syncChapters(); $("game-status").textContent = "CHAPTER COMPLETE"; $("action-bar").hidden = true;
+    const messages = [
+      "Eight sheep, eight records. You found the unmanaged strays and flagged the ownerless sheep. Visibility is the first step; the sorting yard is next.",
+      "Four agents, four approved tools. Each agent passed its matching guardrail and connected with scoped permissions: Search read-only, Documents draft-only, Mail internal-only, and Records limited to approved fields.",
+      "Twenty threats stopped. Your layered controls kept the flock safe. Observe, govern, secure: a good farm needs all three, every day."
+    ];
+    const actions = level < 2 ? [{text: "On to " + chapters[level + 1].name, fn: () => brief(level + 1), primary: true}] : [{text: "Back to the farm", fn: home, primary: true}];
+    actions.push({text: "Play this chapter again", fn: startLevel});
+    const content = showOverlay(level === 2 ? "Adventure complete / Hill Farm keeper" : "Chapter complete / Badge earned", ["Every sheep accounted for.", "A place for every sheep.", "Safe until sunrise."][level], messages[level], actions);
+    const stats = el("div", undefined, "result");
+    const values = level === 0 ? [["8 / 8", "sheep recorded"], [score + "s", "time exploring"]] : level === 1 ? [[goals.length + " / " + goals.length, "tools connected"], [score, "moves"]] : [["20", "threats stopped"], [5 - watch.lost, "fence integrity"]];
+    values.forEach(([value, label]) => { const item = el("div"); item.append(el("strong", String(value)), el("small", label)); stats.append(item); });
+    content.insertBefore(stats, content.querySelector(".buttons"));
+    announce(chapters[level].name + " complete. " + chapters[level].lesson);
+  }
+  function lose() {
+    mode = "result"; clearInput(); $("action-bar").hidden = true; $("game-status").textContent = "NIGHT WATCH / TRY AGAIN";
+    showOverlay("The fence needs mending", "A little help before dawn.", "Five threats slipped through. Your earlier chapters are safe. Remember: Defender = injection, Purview = leaks, Entra = impostors, Intune = devices. Match the threat label, then choose its lane.", [
+      {text: "Retry the night watch", fn: startLevel, primary: true}, {text: "Read the field guide", fn: openJournal}, {text: "Back to the farm", fn: home}
+    ]);
+    announce("Night watch ended. Five threats got through. Retry whenever you are ready.");
+  }
+  function togglePause() {
+    if (mode !== "playing") return;
+    if ($("journal").open) return;
+    paused = !paused; clearInput();
+    if (paused) {
+      showOverlay("A moment by the gate", "The hill can wait.", "Your flock, puzzle, and night watch are paused. Nothing moves while you are away.", [
+        {text: "Resume", fn: togglePause, primary: true}, {text: "Restart this chapter", fn: startLevel}, {text: "Change farmhand", fn: home}
+      ]);
+      $("pause-button").disabled = false; $("pause-button").textContent = "Resume";
+      announce("Game paused.");
+    } else {
+      $("overlay").hidden = true; $("pause-button").disabled = false; $("pause-button").textContent = "Pause";
+      canvas.focus({preventScroll: true}); announce("Back on the hill.");
+    }
+  }
+  function openJournal() {
+    if ($("journal").open) return;
+    lastFocus = document.activeElement; clearInput(); $("journal").showModal();
+  }
+  function closeJournal() {
+    $("journal").close();
+    if (lastFocus && lastFocus.isConnected) lastFocus.focus({preventScroll: true});
+  }
+  function burst(x, y, color) {
+    if (reducedMotion.matches) return;
+    for (let i = 0; i < 12; i++) particles.push({x, y, vx: Math.cos(i * Math.PI / 6) * 65, vy: Math.sin(i * Math.PI / 6) * 65, life: .55, color});
+  }
+  function update(dt) {
+    if (!active()) return;
+    elapsed += dt; inspectCooldown = Math.max(0, inspectCooldown - dt);
+    particles = particles.filter(p => p.life > 0);
+    for (const p of particles) { p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt; }
+    if (level === 0) {
+      moveFlock(dt);
+      let dx = (keys.has("d") || keys.has("arrowright") ? 1 : 0) - (keys.has("a") || keys.has("arrowleft") ? 1 : 0);
+      let dy = (keys.has("s") || keys.has("arrowdown") ? 1 : 0) - (keys.has("w") || keys.has("arrowup") ? 1 : 0);
+      if (dx || dy) target = null;
+      if (target) {
+        const destination = target.sheepIndex !== undefined ? flock[target.sheepIndex] : target;
+        const distance = Math.hypot(destination.x - player.x, destination.y - player.y);
+        if (distance < 5) target = null;
+        else {
+          const speed = Math.min(180, distance / dt);
+          dx = (destination.x - player.x) / distance * speed / 180;
+          dy = (destination.y - player.y) / distance * speed / 180;
+        }
+      }
+      const length = Math.hypot(dx, dy);
+      const divisor = Math.max(1, length);
+      if (length > 0) { player.x = Math.min(914, Math.max(46, player.x + dx / divisor * 180 * dt)); player.y = Math.min(521, Math.max(94, player.y + dy / divisor * 180 * dt)); }
+      if (inspectCooldown <= 0) {
+        const nearby = nearestSheep(34);
+        if (nearby !== -1) catchSheep(nearby);
+      }
+    } else if (level === 1) {
+      moveDelay -= dt;
+      if (moveDelay <= 0) {
+        const directions = [["arrowleft", "a", -1, 0], ["arrowright", "d", 1, 0], ["arrowup", "w", 0, -1], ["arrowdown", "s", 0, 1]];
+        const dir = directions.find(([a, b]) => keys.has(a) || keys.has(b));
+        if (dir) { step(dir[2], dir[3]); moveDelay = .17; }
+      }
+    } else {
+      watch.cooldown = Math.max(0, watch.cooldown - dt); watch.next -= dt; watch.feedbackTime -= dt;
+      const totalToSpawn = 20 + watch.lost;
+      if (watch.next <= 0 && watch.spawned < totalToSpawn) {
+        const type = watch.spawned < 20 ? watch.sequence[watch.spawned] : watch.spawned % 4;
+        let lane = Math.floor(Math.random() * 4);
+        const available = [0, 1, 2, 3].filter(i => !watch.threats.some(t => t.lane === i && t.x > 680));
+        if (available.length) lane = available[Math.floor(Math.random() * available.length)];
+        watch.threats.push({x: 860, lane, type, flash: 0, speed: 40 + Math.min(watch.spawned, 20) * .6});
+        watch.spawned++; watch.next = watch.spawned < 4 ? 3 : 2.25;
+      }
+      for (const threat of [...watch.threats]) {
+        threat.x -= threat.speed * dt; threat.flash = Math.max(0, threat.flash - dt);
+        if (threat.x < 181) {
+          watch.threats.splice(watch.threats.indexOf(threat), 1); watch.lost++;
+          burst(174, laneY(threat.lane), "danger"); tone(120, .15);
+          addLog("Fence breach / " + watch.lost + " of 5", tools[threat.type].hint + " got through. Counter it with " + tools[threat.type].name + ".");
+          checkWatchEnd(); if (mode !== "playing") break;
+        }
+      }
+      $("game-status").textContent = (5 - watch.lost) + "/5 FENCE / " + watch.blocked + " BLOCKED";
+    }
+  }
+
+  function rect(x, y, w, h, color, alpha = 1) {
+    ctx.globalAlpha = alpha; ctx.fillStyle = palette[color]; ctx.fillRect(Math.round(x), Math.round(y), w, h); ctx.globalAlpha = 1;
+  }
+  function rounded(x, y, w, h, radius, color, stroke = null, width = 1.5) {
+    ctx.fillStyle = palette[color]; ctx.beginPath(); ctx.roundRect(x, y, w, h, radius); ctx.fill();
+    if (stroke) { ctx.strokeStyle = palette[stroke]; ctx.lineWidth = width; ctx.stroke(); }
+  }
+  function line(x1, y1, x2, y2, color, width = 2, alpha = 1) {
+    ctx.globalAlpha = alpha; ctx.strokeStyle = palette[color]; ctx.lineWidth = width; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.globalAlpha = 1;
+  }
+  function ellipse(x, y, rx, ry, color, alpha = 1) {
+    ctx.globalAlpha = alpha; ctx.fillStyle = palette[color]; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+  }
+  function polygon(points, color, alpha = 1) {
+    ctx.globalAlpha = alpha; ctx.fillStyle = palette[color]; ctx.beginPath(); points.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1;
+  }
+  function text(value, x, y, size = 12, color = "text", align = "left") {
+    ctx.fillStyle = palette[color]; ctx.font = "bold " + size + "px Consolas, 'Courier New', monospace"; ctx.textAlign = align; ctx.fillText(value, x, y); ctx.textAlign = "left";
+  }
+  function pill(value, x, y, color = "accent", size = 11) {
+    ctx.font = "bold " + size + "px Consolas, 'Courier New', monospace";
+    const width = ctx.measureText(value).width + 18;
+    if (color === "success") color = "success-ink";
+    rounded(x - width / 2, y - 14, width, 23, 9, "surface", "border");
+    text(value, x, y + 2, size, color, "center");
+  }
+  function tree(x, y, size = 1, bracken = false) {
+    ctx.save(); ctx.translate(x, y); ctx.scale(size, size);
+    ellipse(5, 21, 26, 6, "farm-ink", .09);
+    rounded(-5, -4, 10, 29, 4, "bark");
+    const leaf = bracken ? "bark" : "grass";
+    ellipse(-16, -12, 17, 18, leaf); ellipse(15, -13, 19, 20, leaf);
+    ellipse(0, -28, 21, 21, leaf); ellipse(-2, -8, 22, 21, leaf);
+    ellipse(-10, -30, 8, 5, "wool", .25); ellipse(9, -8, 19, 17, "success", .25); ctx.restore();
+  }
+  function fence(x1, y1, x2, y2) {
+    line(x1, y1 - 5, x2, y2 - 5, "bark", 4); line(x1, y1 + 4, x2, y2 + 4, "bark", 4);
+    const len = Math.hypot(x2 - x1, y2 - y1), count = Math.max(1, Math.round(len / 28));
+    for (let i = 0; i <= count; i++) { const t = i / count; rounded(x1 + (x2 - x1) * t - 3, y1 + (y2 - y1) * t - 13, 7, 28, 3, "bark"); }
+  }
+  function sheep(x, y, scale = 1, mark = "", dark = false, bob = 0) {
+    ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
+    ellipse(0, 24, 31, 6, "farm-ink", .12);
+    ctx.translate(0, bob);
+    rounded(-17, 8, 7, 18, 3, "farm-ink"); rounded(8, 8, 7, 18, 3, "farm-ink");
+    const fleece = dark ? "text-muted" : "wool";
+    ellipse(-5, -2, 28, 22, "bark");
+    for (let i = 0; i < 9; i++) {
+      const angle = i / 9 * Math.PI * 2, px = -6 + Math.cos(angle) * 22, py = -3 + Math.sin(angle) * 14;
+      ellipse(px, py, 10, 10, "bark"); ellipse(px, py - 1, 9, 9, fleece);
+    }
+    ellipse(-6, -4, 26, 19, fleece);
+    ellipse(-17, -11, 7, 4, dark ? "wool" : "border", dark ? .14 : .28);
+    ellipse(13, -7, 10, 5, "farm-ink"); ellipse(35, -7, 9, 5, "farm-ink");
+    ellipse(24, 3, 13, 17, "farm-ink");
+    ellipse(19, -2, 3.8, 5.3, "wool"); ellipse(29, -2, 3.8, 5.3, "wool");
+    ellipse(20, -1, 1.9, 2.8, "farm-ink"); ellipse(30, -1, 1.9, 2.8, "farm-ink");
+    ellipse(16, 8, 3.2, 2, "accent", .75); ellipse(33, 8, 3.2, 2, "accent", .75);
+    ellipse(24, 9, 2, 1.5, "wool", .7);
+    ctx.strokeStyle = palette["wool"]; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.arc(24, 10, 4, .3, 2.8); ctx.stroke();
+    ellipse(20, -15, 5, 5, fleece); ellipse(26, -16, 5, 5, fleece); ellipse(31, -13, 4, 4, fleece);
+    rounded(9, 9, 6, 9, 2, "accent"); ellipse(12, 12, 1, 1, "wool");
+    if (mark) { ellipse(-8, -1, 11, 11, dark ? "farm-ink" : "amber-soft"); text(mark, -8, 4, 15, dark ? "wool" : "accent", "center"); }
+    ctx.restore();
+  }
+  function avatar(x, y, scale = 1) {
+    ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
+    ellipse(0, 23, 20, 5, "farm-ink", .12);
+    if (saved.role === "sheep") { sheep(-5, -1, .85, "", false); rounded(-15, -27, 23, 6, 3, "accent"); }
+    if (saved.role === "dog") {
+      ellipse(-15, -6, 8, 17, "farm-ink"); ellipse(15, -6, 8, 17, "farm-ink"); ellipse(0, -3, 17, 21, "farm-ink");
+      ellipse(0, -10, 6, 14, "wool"); ellipse(0, 7, 12, 8, "wool");
+      ellipse(-7, -4, 2.7, 3.6, "farm-ink"); ellipse(8, -4, 2.7, 3.6, "farm-ink");
+      ellipse(0, 4, 5, 3.5, "farm-ink"); rounded(-3, 10, 6, 9, 3, "accent");
+      rounded(-15, 17, 30, 6, 3, "accent");
+      ellipse(-9, 22, 6, 4, "farm-ink"); ellipse(9, 22, 6, 4, "farm-ink");
+    }
+    if (saved.role === "shepherd") {
+      rounded(-9, 10, 7, 15, 3, "farm-ink"); rounded(3, 10, 7, 15, 3, "farm-ink");
+      rounded(-14, -6, 29, 23, 9, "accent", "farm-ink");
+      ellipse(0, -16, 12, 14, "skin"); ellipse(0, -16, 12, 14, "warning", .12);
+      ellipse(-4, -16, 1.5, 2, "farm-ink"); ellipse(5, -16, 1.5, 2, "farm-ink");
+      ctx.strokeStyle = palette["farm-ink"]; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(0, -12, 4, .2, 2.9); ctx.stroke();
+      rounded(-12, -33, 24, 14, 7, "warning", "bark"); rounded(-18, -25, 36, 5, 2, "warning", "bark");
+      line(21, -28, 21, 24, "bark", 3);
+      ctx.strokeStyle = palette["bark"]; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(27, -28, 6, Math.PI, 2.4 * Math.PI); ctx.stroke();
+    }
+    if (saved.role === "owl") {
+      ellipse(0, -3, 20, 25, "bark");
+      polygon([[-19, -15], [-19, -31], [-6, -22]], "bark"); polygon([[19, -15], [19, -31], [6, -22]], "bark");
+      ellipse(-9, -9, 10, 12, "wool"); ellipse(9, -9, 10, 12, "wool");
+      ellipse(-8, -8, 4, 6, "farm-ink"); ellipse(8, -8, 4, 6, "farm-ink");
+      ellipse(-7, -10, 1.5, 2, "wool"); ellipse(9, -10, 1.5, 2, "wool");
+      polygon([[-5, 2], [5, 2], [0, 10]], "warning"); rounded(-15, 13, 30, 5, 2, "accent");
+      ellipse(-8, 23, 5, 3, "warning"); ellipse(8, 23, 5, 3, "warning");
+    }
+    ctx.restore();
+  }
+  function barn(x, y, scale = 1) {
+    ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
+    ellipse(8, 67, 67, 9, "text", .10);
+    rect(-55, -14, 110, 80, "accent", .8); polygon([[-67, -14], [0, -64], [67, -14]], "text-muted");
+    for (let sx = -48; sx < 55; sx += 12) line(sx, -11, sx, 64, "accent", 2, .65);
+    line(-55, -14, 55, -14, "surface", 4, .8);
+    rect(-19, 18, 38, 48, "surface"); rect(-15, 23, 30, 43, "text-muted");
+    line(-15, 23, 15, 66, "border", 3); line(15, 23, -15, 66, "border", 3);
+    rect(-40, 4, 15, 19, "surface"); rect(26, 4, 15, 19, "surface");
+    rect(-9, -27, 18, 18, "surface"); text("365", 0, -14, 10, "accent", "center"); ctx.restore();
+  }
+  function landscape() {
+    rect(0, 0, W, H, "meadow");
+    rect(0, 0, W, 78, "sky");
+    ellipse(160, 60, 250, 125, "grass", .23); ellipse(650, 45, 410, 125, "grass", .23);
+    ellipse(930, 220, 170, 260, "grass", .16);
+    ctx.strokeStyle = palette["success"]; ctx.lineWidth = 1; ctx.globalAlpha = .12;
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath(); ctx.ellipse(75, 50, 260 + i * 18, 170 + i * 14, -.2, .4, 2.9); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(940, 330, 225 + i * 16, 250 + i * 14, .3, 1.4, 4.4); ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    for (let i = 0; i < 170; i++) {
+      const x = 40 + ((i * 137) % 880), y = 95 + ((i * 79) % 426);
+      rect(x, y, 2, 4, "success", .3);
+      if (i % 4 === 0) {
+        for (let petal = 0; petal < 5; petal++) ellipse(x + Math.cos(petal * 1.26) * 2.5, y + Math.sin(petal * 1.26) * 2.5, 1.8, 1.8, i % 3 ? "wool" : "accent");
+        ellipse(x, y, 1.5, 1.5, "warning");
+      }
+    }
+    ctx.strokeStyle = palette["amber-soft"]; ctx.lineWidth = 30; ctx.lineCap = "round"; ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.moveTo(90, 560); ctx.bezierCurveTo(110, 400, 530, 430, 510, 255); ctx.bezierCurveTo(480, 120, 700, 130, 950, 90); ctx.stroke(); ctx.globalAlpha = 1; ctx.lineCap = "butt";
+    for (const [x, y, s] of [[45, 110, 1.1], [84, 135, .8], [280, 72, .8], [560, 80, .9], [895, 100, 1], [908, 359, .9], [600, 520, 1], [290, 493, .8]]) tree(x, y, s);
+    for (const [x, y] of [[765, 150], [840, 155], [800, 115], [850, 425], [790, 462], [870, 473]]) tree(x, y, .7, true);
+    fence(45, 548, 250, 548); fence(665, 548, 919, 548);
+    barn(80, 225, .56);
+    rect(76, 301, 9, 24, "text-muted");
+    rect(49, 297, 65, 19, "surface"); text("FLOCK BOOK", 81, 310, 9, "text-muted", "center");
+    rect(598, 139, 12, 100, "text-muted", .7); rect(643, 139, 12, 100, "text-muted", .7);
+    line(604, 145, 649, 235, "border-strong", 4); line(649, 145, 604, 235, "border-strong", 4);
+    rect(590, 111, 72, 33, "surface"); polygon([[584, 111], [626, 80], [667, 111]], "text-muted");
+    text("WATCHTOWER", 626, 263, 10, "text-muted", "center");
+    text("THE BRACKEN", 805, 85, 11, "text-muted", "center");
+    text("HILL FARM / 365", 36, 35, 13, "accent"); text("N", 913, 35, 12, "text-muted", "center"); line(913, 42, 913, 62, "text-muted");
+  }
+  function drawObserve() {
+    landscape();
+    flock.forEach((s, i) => {
+      const dark = i === 2 || i === 7, registered = found.has(i);
+      if (!registered && dark) ellipse(s.x, s.y, 42, 35, "text-muted", .10);
+      const bob = reducedMotion.matches || !active() || registered ? 0 : Math.sin(animationTime * (s.fleeing ? 15 : 8) + i) * (s.fleeing ? 3 : 1.5);
+      ctx.save(); ctx.translate(s.x, s.y);
+      if (s.vx < 0 && !registered) ctx.scale(-1, 1);
+      sheep(0, 0, .9, registered ? s.mark : "", dark, bob);
+      ctx.restore();
+      if (registered) pill(s.name + " / logged", s.x, s.y - 35, "success", 10);
+      else if (Math.hypot(s.x - player.x, s.y - player.y) < 85) {
+        ellipse(s.x, s.y + 20, 33, 9, "accent", .18); pill("Catch me! / E", s.x, s.y - 35);
+      } else {
+        text("?", s.x, s.y - 31, 16, "accent", "center");
+      }
+    });
+    if (target) {
+      const destination = target.sheepIndex !== undefined ? flock[target.sheepIndex] : target;
+      line(destination.x - 7, destination.y + 29, destination.x + 7, destination.y + 29, "accent");
+      if (target.sheepIndex === undefined) line(destination.x, destination.y + 22, destination.x, destination.y + 36, "accent");
+    }
+    avatar(player.x, player.y); pill(roles.find(r => r.id === saved.role).name, player.x, player.y - 43, "accent", 10);
+  }
+  function drawGovern() {
+    rect(0, 0, W, H, "surface-soft"); text("AGENTS", 78, 34, 13, "accent");
+    text("GUARDRAILS", 250, 34, 13, "accent");
+    text("TOOLS", 445, 34, 13, "accent");
+    line(155, 30, 228, 30, "border-strong", 2); line(370, 30, 423, 30, "border-strong", 2);
+    const size = grid.size;
+    for (let y = 0; y < grid.rows; y++) for (let x = 0; x < grid.cols; x++) {
+      const px = grid.x + x * size, py = grid.y + y * size;
+      if (wall(x, y)) {
+        rounded(px + 2, py + 2, size - 4, size - 4, 6, "border", "border-strong", 1.5);
+        line(px + 4, py + 21, px + size - 4, py + 21, "surface", 2);
+        line(px + 20, py + 3, px + 20, py + 19, "surface", 2);
+      } else {
+        rounded(px + 1, py + 1, size - 2, size - 2, 4, (x + y) % 2 ? "meadow" : "grass-soft");
+      }
+    }
+    for (const gate of guardrails) {
+      const x = grid.x + gate.x * size, y = grid.y + gate.y * size;
+      const goal = goals.find(g => g.id === gate.id);
+      rounded(x + 2, y + 2, size - 4, size - 4, 5, goal.color, "accent", 2);
+      line(x + 5, y + 9, x + 5, y + 33, "bark", 3); line(x + 37, y + 9, x + 37, y + 33, "bark", 3);
+      text(gate.id, x + 21, y + 28, 20, "accent", "center");
+    }
+    for (const goal of goals) {
+      const x = grid.x + goal.x * size, y = grid.y + goal.y * size;
+      const inPlace = board && board.sheep.some(s => s.id === goal.id && s.x === goal.x && s.y === goal.y);
+      rounded(x + 2, y + 2, size - 4, size - 4, 7, goal.color, inPlace ? "success-ink" : "accent", 2);
+      if (!inPlace) {
+        rounded(x + 8, y + 7, 26, 20, 3, "surface", "text-muted");
+        text(goal.id, x + 21, y + 23, 15, "accent", "center");
+        line(x + 21, y + 28, x + 21, y + 33, "text-muted", 2); line(x + 14, y + 33, x + 28, y + 33, "text-muted", 2);
+      }
+      ctx.setLineDash(inPlace ? [] : [3, 4]);
+      line(x + size, y + 21, 570, y + 21, inPlace ? "success-ink" : "border-strong", inPlace ? 3 : 1.5);
+      ctx.setLineDash([]);
+      rounded(578, y - 1, 350, 63, 10, inPlace ? "meadow" : "surface");
+      text("AGENT " + goal.id + " > " + goal.name.toUpperCase(), 593, y + 19, 16, inPlace ? "success-ink" : "text");
+      text("Guardrail " + goal.id + ": " + goal.policy, 593, y + 38, 13, "text-muted");
+      const governed = board && board.sheep.some(s => s.id === goal.id && s.governed);
+      text(inPlace ? "CONNECTED / GUARDRAIL APPLIED" : governed ? "GUARDRAIL APPLIED / CONNECT TOOL " + goal.id : "FIRST VISIT GUARDRAIL BLOCK " + goal.id, 593, y + 53, 10, inPlace ? "success-ink" : "accent");
+    }
+    if (board) {
+      board.sheep.forEach(s => sheep(grid.x + (s.x + .43) * size, grid.y + (s.y + .48) * size, .56, s.id));
+      avatar(grid.x + (board.x + .5) * size, grid.y + (board.y + .5) * size, .62);
+    }
+    text("One guardrail block per sheep. Match the letter.", 32, 539, 12, "text");
+    text("Grey stones block the way. Push only; Z to undo.", 32, 558, 11, "text-muted");
+    text("CONNECT AGENT > GUARDRAIL > TOOL", 593, 65, 14, "accent");
+    text("Four connections. One governed flock.", 593, 87, 12, "text-muted");
+    text("SPACE TO PLAN / NO TIME LIMIT", 593, 539, 12, "accent");
+  }
+  function wolf(x, y, type, flash) {
+    ctx.save(); ctx.translate(x, y);
+    ellipse(0, 20, 29, 6, "text", .10);
+    const color = flash ? "danger" : "night-soft";
+    if (type === 3) {
+      rounded(-27, -17, 53, 33, 7, "warning", "bark", 2); rounded(-20, -12, 28, 18, 4, "sky");
+      rounded(18, -8, 17, 24, 5, color); ellipse(-14, 18, 8, 8, "farm-ink"); ellipse(21, 18, 8, 8, "farm-ink");
+      ellipse(-14, 18, 3, 3, "border"); ellipse(21, 18, 3, 3, "border");
+      text("?", -6, 2, 17, "farm-ink", "center");
+    } else {
+      ellipse(0, 0, 23, 22, color); polygon([[-24, -8], [-17, -31], [-5, -12]], color);
+      polygon([[4, -12], [17, -31], [24, -8]], color);
+      polygon([[-19, -12], [-16, -24], [-10, -13]], "accent"); polygon([[10, -13], [16, -24], [19, -12]], "accent");
+      ellipse(-9, -3, 5, 6, "wool"); ellipse(9, -3, 5, 6, "wool");
+      ellipse(-7, -2, 2.5, 3.5, "farm-ink"); ellipse(11, -2, 2.5, 3.5, "farm-ink");
+      ellipse(0, 9, 12, 7, "wool"); ellipse(0, 5, 5, 3, "farm-ink");
+      line(-16, -12, -5, -9, "farm-ink", 2); line(4, -9, 16, -12, "farm-ink", 2);
+      if (type === 1) { rounded(20, -1, 15, 20, 3, "accent"); text("!", 27, 14, 14, "wool", "center"); }
+      if (type === 2) { rounded(-24, 18, 48, 13, 4, "wool"); text("FAKE", 0, 28, 10, "accent", "center"); }
+    }
+    ctx.restore();
+  }
+  function drawSecure() {
+    rect(0, 0, W, H, "night-bg");
+    for (let i = 0; i < 26; i++) {
+      const sx = 28 + (i * 137) % 900, sy = 14 + (i * 47) % 78;
+      rect(sx, sy, i % 3 ? 2 : 3, i % 3 ? 2 : 3, "night-ink", i % 3 ? .25 : .5);
+    }
+    ellipse(850, 70, 23, 23, "night-ink", .85);
+    ellipse(858, 64, 21, 21, "night-bg");
+    text("NIGHT WATCH / KEEP THE LINE", 28, 31, 13, "night-accent");
+    text("FENCE", 628, 31, 11, "night-soft");
+    for (let i = 0; i < 5; i++) {
+      rect(682 + i * 22, 20, 14, 15, watch && i >= 5 - watch.lost ? "night-line" : "night-accent");
+    }
+    text((watch ? 5 - watch.lost : 5) + "/5", 809, 32, 12, "night-ink");
+    for (let i = 0; i < 4; i++) {
+      const y = laneY(i); rect(184, y - 39, 724, 78, "night-field");
+      line(194, y + 38, 908, y + 38, "night-line", 1);
+      for (let x = 260; x < 840; x += 70) line(x, y, x + 14, y, "night-line", 1, .5);
+      text("LANE " + (i + 1), 45, y - 14, 12, "night-soft");
+      rect(43, y - 1, 30, 30, "night-field"); text(["Q", "W", "E", "R"][i], 58, y + 21, 19, "night-accent", "center");
+      sheep(118, y + 4, .55);
+      line(167, y - 32, 167, y + 32, "night-accent", 4);
+      line(160, y - 18, 174, y - 18, "night-accent", 3); line(160, y + 18, 174, y + 18, "night-accent", 3);
+      for (let j = 0; j < 3; j++) {
+        const x = 912 + j * 19, ty = y + (j % 2) * 13;
+        ellipse(x, ty - 11, 14, 26, "night-line", .8);
+        ellipse(x - 7, ty - 3, 14, 15, "night-line", .8);
+        rect(x - 2, ty + 8, 4, 20, "night-line");
+      }
+    }
+    if (watch) for (const threat of watch.threats) {
+      wolf(threat.x, laneY(threat.lane), threat.type, threat.flash > 0);
+      pill(tools[threat.type].threat, threat.x, laneY(threat.lane) - 35, threat.flash > 0 ? "danger" : "text", 11);
+    }
+    avatar(130, 78, .8);
+    const tool = tools[selectedTool];
+    text("READY: " + tool.name.toUpperCase() + " / " + tool.action.toUpperCase(), 190, 77, 14, "night-accent");
+    text("COUNTERS " + tool.threat, 190, 96, 10, "night-soft");
+    const feedback = watch && watch.feedbackTime > 0 ? watch.feedback : "Choose control 1-4, then tap a threat or use lane Q W E R.";
+    text(feedback, 480, 550, 12, "night-ink", "center");
+    if (watch && watch.spawned === 0) text("MOVEMENT AT THE TREE LINE...", 570, 305, 15, "night-soft", "center");
+  }
+  function drawHome() {
+    rect(0, 0, W, H, "sky");
+    for (let i = 0; i < 10; i++) {
+      const a = i * Math.PI / 5; line(817 + Math.cos(a) * 41, 91 + Math.sin(a) * 41, 817 + Math.cos(a) * 48, 91 + Math.sin(a) * 48, "warning", 4);
+    }
+    ellipse(817, 91, 29, 29, "warning");
+    ellipse(809, 88, 2, 3, "farm-ink"); ellipse(825, 88, 2, 3, "farm-ink");
+    ctx.strokeStyle = palette["farm-ink"]; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(817, 93, 9, .3, 2.8); ctx.stroke();
+    ellipse(369, 392, 450, 260, "grass-soft"); ellipse(923, 365, 350, 200, "grass");
+    ellipse(670, 540, 540, 300, "meadow"); ellipse(1080, 595, 400, 245, "grass-soft");
+    for (const [x, y, s] of [[547, 209, .65], [584, 224, .5], [914, 238, 1.1], [938, 265, .8], [515, 391, .75], [922, 445, 1.15]]) tree(x, y, s);
+    for (const [x, y, s] of [[560, 83, .65], [674, 52, .8], [876, 112, .5]]) {
+      ellipse(x, y, 30 * s, 13 * s, "wool");
+      ellipse(x - 14 * s, y - 8 * s, 15 * s, 15 * s, "wool");
+      ellipse(x + 9 * s, y - 13 * s, 19 * s, 19 * s, "wool");
+    }
+    // A path leads from the farmyard to the player, leaving the welcome panel quiet.
+    ctx.strokeStyle = palette["amber-soft"]; ctx.lineWidth = 34; ctx.beginPath();
+    ctx.moveTo(738, 319); ctx.bezierCurveTo(692, 370, 845, 438, 700, 590); ctx.stroke(); ctx.globalAlpha = 1;
+    fence(546, 317, 662, 317); fence(816, 317, 940, 317);
+    barn(740, 269, .95);
+    for (let i = 0; i < 74; i++) {
+      const x = 520 + (i * 137) % 416, y = 335 + (i * 79) % 206;
+      rect(x, y, 2, 5, "success", .35);
+      if (i % 5 === 0) {
+        for (let p = 0; p < 5; p++) ellipse(x + Math.cos(p * 1.26) * 3, y + Math.sin(p * 1.26) * 3, 2, 2, i % 3 ? "wool" : "accent");
+        ellipse(x, y, 1.8, 1.8, "warning");
+      }
+    }
+    sheep(593, 379, .95); sheep(884, 391, 1.1);
+    sheep(730, 428, 2.25);
+    sheep(570, 490, 1.1, "", true); avatar(856, 495, 1.5);
+    rounded(800, 532, 110, 27, 8, "wool", "bark"); text("LANE END", 855, 550, 13, "accent", "center");
+    text("HILL FARM / 365", 715, 36, 12, "text-muted", "center");
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    if (mode === "home") drawHome();
+    else if (level === 0) { if (mode === "brief") drawHome(); else drawObserve(); }
+    else if (level === 1) drawGovern();
+    else drawSecure();
+    for (const p of particles) rect(p.x, p.y, 5, 5, p.color, Math.max(0, p.life / .55));
+  }
+  function frame(time) {
+    const dt = lastTime ? Math.min((time - lastTime) / 1000, .05) : 0; lastTime = time;
+    if (active()) animationTime += dt;
+    update(dt); draw(); requestAnimationFrame(frame);
+  }
+  function point(event) {
+    const box = canvas.getBoundingClientRect();
+    return {x: (event.clientX - box.left) * W / box.width, y: (event.clientY - box.top) * H / box.height};
+  }
+  canvas.addEventListener("pointerdown", event => {
+    if (!active()) return;
+    event.preventDefault(); canvas.focus({preventScroll: true});
+    const p = point(event);
+    if (level === 0) {
+      let selected = -1, closest = 52;
+      flock.forEach((sheep, i) => {
+        const distance = Math.hypot(sheep.x - p.x, sheep.y - p.y);
+        if (!found.has(i) && distance < closest) { selected = i; closest = distance; }
+      });
+      target = selected === -1
+        ? {x: Math.max(46, Math.min(914, p.x)), y: Math.max(94, Math.min(521, p.y))}
+        : {sheepIndex: selected};
+      if (selected !== -1) announce("Chasing " + flock[selected].name + "! Get close to tag automatically.");
+    }
+    if (level === 1) {
+      const x = Math.floor((p.x - grid.x) / grid.size), y = Math.floor((p.y - grid.y) / grid.size);
+      const dx = x - board.x, dy = y - board.y;
+      if (Math.abs(dx) + Math.abs(dy) === 1) step(dx, dy);
+      else announce("Tap a tile next to your farmhand, or use the direction buttons.");
+    }
+    if (level === 2) {
+      const lane = Math.round((p.y - 156) / 98);
+      if (lane >= 0 && lane <= 3) {
+        const threat = watch.threats.filter(t => t.lane === lane && Math.abs(t.x - p.x) < 100).sort((a, b) => Math.abs(a.x - p.x) - Math.abs(b.x - p.x))[0];
+        defend(lane, threat);
+      }
+    }
+  });
+  document.addEventListener("keydown", event => {
+    if (event.ctrlKey || event.altKey || event.metaKey) return;
+    const key = event.key.toLowerCase();
+    if ($("journal").open) return;
+    if (key === "escape" && mode === "playing") { event.preventDefault(); togglePause(); return; }
+    const focused = document.activeElement;
+    const onButton = focused && focused.tagName === "BUTTON";
+    if (key === " " && mode === "playing" && !onButton) { event.preventDefault(); if (!event.repeat) togglePause(); return; }
+    if (!active() || (onButton && (key === " " || key === "enter"))) return;
+    const movement = ["arrowup", "arrowdown", "arrowleft", "arrowright", "w", "a", "s", "d"];
+    if (level !== 2 && movement.includes(key)) { event.preventDefault(); keys.add(key); }
+    if (event.repeat) return;
+    if (level === 0 && key === "e") { event.preventDefault(); inspect(); }
+    if (level === 1 && key === "z") { event.preventDefault(); undo(); }
+    if (level === 1 && key === "r") { event.preventDefault(); resetYard(); }
+    if (level === 2) {
+      if (["1", "2", "3", "4"].includes(key)) { event.preventDefault(); selectTool(Number(key) - 1); }
+      const lane = ["q", "w", "e", "r"].indexOf(key);
+      if (lane >= 0) { event.preventDefault(); defend(lane); }
+    }
+  });
+  document.addEventListener("keyup", event => keys.delete(event.key.toLowerCase()));
+  window.addEventListener("blur", () => { clearInput(); if (active()) togglePause(); });
+  document.addEventListener("visibilitychange", () => {
+    clearInput(); lastTime = 0;
+    if (document.hidden && mode === "playing" && !paused && !$("journal").open) togglePause();
+  });
+  $("pause-button").addEventListener("click", togglePause);
+  $("journal-button").addEventListener("click", openJournal);
+  $("close-journal").addEventListener("click", closeJournal);
+  $("journal").addEventListener("close", () => { clearInput(); lastTime = 0; if (lastFocus && lastFocus.isConnected) lastFocus.focus({preventScroll: true}); });
+  $("theme-button").addEventListener("click", () => {
+    document.documentElement.dataset.theme = document.documentElement.dataset.theme === "dark" ? "light" : "dark"; refreshPalette();
+  });
+  $("sound-button").addEventListener("click", async () => {
+    if (!sound) {
+      try {
+        const Audio = window.AudioContext || window.webkitAudioContext;
+        if (!Audio) throw new Error("Web Audio is not supported");
+        if (!audio) audio = new Audio();
+        await audio.resume(); sound = true;
+      } catch (error) { announce("Sound is unavailable: " + error.message + ". You can still play silently."); return; }
+    } else sound = false;
+    const label = sound ? "Sound on" : "Sound off";
+    $("sound-button").querySelector("span").textContent = label;
+    $("sound-button").setAttribute("aria-label", label); $("sound-button").setAttribute("aria-pressed", String(sound)); tone();
+  });
+  document.querySelectorAll("[data-level]").forEach(node => node.addEventListener("click", () => {
+    const index = Number(node.dataset.level);
+    if (mode === "playing") {
+      if (paused) { paused = false; $("overlay").hidden = true; }
+      togglePause();
+      showOverlay("Leave this chapter?", "Back to the gate?", "Your completed chapters are saved. Leaving now restarts this chapter's current run.", [
+        {text: "Stay here", fn: togglePause, primary: true},
+        {text: "Go to " + chapters[index].name, fn: () => brief(index)}
+      ]);
+    } else brief(index);
+  }));
+  document.querySelector("h1").append(roleIcon("sheep"));
+  refreshPalette(); home();
+  if (storageIssue) { $("storage-notice").textContent = storageIssue; announce(storageIssue); }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

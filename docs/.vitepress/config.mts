@@ -31,6 +31,7 @@ export default defineConfig({
         ],
       },
       { text: "Resources", link: "/resources" },
+      { text: "Games", link: "/games" },
     ],
 
     sidebar: [
@@ -58,6 +59,10 @@ export default defineConfig({
       {
         text: "Resources",
         items: [{ text: "Resources", link: "/resources" }],
+      },
+      {
+        text: "Games",
+        items: [{ text: "Games", link: "/Games" }],
       },
     ],
 
